@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Corporate Portal</title>
+    
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e293b">
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/div5frz9v/image/upload/v1782222823/kotak_wtjzkr.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid #e2e8f0; }
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom Scrollbar for professional look */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased h-screen flex flex-col">
+
+    <div id="toast" class="fixed top-4 right-4 z-50 transform transition-all duration-300 translate-y-[-150%] opacity-0 flex items-center gap-3 px-6 py-4 rounded-lg shadow-xl font-medium text-sm">
+        <i data-lucide="info" id="toast-icon" class="w-5 h-5"></i>
+        <span id="toast-message">Notifikasi</span>
+    </div>
+
+    <header id="main-header" class="bg-white border-b border-slate-200 sticky top-0 z-40 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="https://res.cloudinary.com/div5frz9v/image/upload/v1782222823/kotak_wtjzkr.jpg" alt="Logo" class="h-10 w-auto rounded object-contain">
+                <div class="hidden sm:block">
+                    <h1 class="font-bold text-slate-800 leading-tight">Corporate Portal</h1>
+                    <p class="text-xs text-slate-500">Activity Management System</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <div id="header-user-name" class="font-semibold text-sm text-slate-800">User Name</div>
+                    <div id="header-user-role" class="text-xs text-slate-500 uppercase tracking-wider">Role</div>
+                </div>
+                <button onclick="app.logout()" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors" title="Logout">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="login-view" class="flex-1 flex items-center justify-center p-4 bg-slate-50">
+        <div class="glass-panel rounded-xl shadow-sm w-full max-w-md p-8 sm:p-10 fade-in">
+            <div class="text-center mb-8">
+                <img src="https://res.cloudinary.com/div5frz9v/image/upload/v1782222823/kotak_wtjzkr.jpg" alt="Logo" class="h-20 w-auto mx-auto mb-4 rounded shadow-sm object-contain">
+                <h2 class="text-2xl font-bold text-slate-800">Secure Access</h2>
+                <p class="text-sm text-slate-500 mt-2">Masuk ke sistem manajemen aktivitas</p>
+            </div>
+            
+            <form id="login-form" class="space-y-5" onsubmit="event.preventDefault(); app.login();">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Username</label>
+                    <input type="text" id="username" class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow outline-none text-sm" placeholder="Masukkan username..." required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow outline-none text-sm" placeholder="••••••••" required>
+                </div>
+                <button type="submit" id="btn-login" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2">
+                    <span>Masuk Sistem</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-slate-200 text-center">
+                <p class="text-xs text-slate-400 font-medium tracking-wide">arpra copyright 2026 versi 1.0</p>
+            </div>
+        </div>
+    </main>
+
+    <main id="child-view" class="flex-1 w-full max-w-5xl mx-auto p-4 sm:p-6 hidden overflow-y-auto fade-in">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Area Kamera & Input (Kiri) -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="activity" class="text-indigo-600"></i> Log Aktivitas Baru
+                    </h3>
+                    
+                    <!-- Pilihan Aktivitas -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6" id="activity-buttons">
+                        <!-- Diisi via JS -->
+                    </div>
+
+                    <!-- Kamera / GPS Area -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <!-- Camera Section -->
+                        <div class="border border-slate-200 rounded-lg p-4 bg-slate-50 flex flex-col items-center justify-center min-h-[220px] relative">
+                            <video id="camera-stream" class="absolute inset-0 w-full h-full object-cover rounded-lg hidden" autoplay playsinline></video>
+                            <img id="photo-preview" class="absolute inset-0 w-full h-full object-cover rounded-lg hidden" alt="Preview">
+                            
+                            <div id="camera-controls" class="relative z-10 flex flex-col items-center gap-3">
+                                <button onclick="app.startCamera()" class="p-3 bg-white border border-slate-200 text-slate-700 rounded-full shadow-sm hover:bg-slate-50 transition-colors">
+                                    <i data-lucide="camera" class="w-6 h-6"></i>
+                                </button>
+                                <span class="text-xs text-slate-500 font-medium">Buka Kamera</span>
+                            </div>
+
+                            <button id="btn-snap" onclick="app.takePhoto()" class="hidden relative z-10 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm shadow mt-auto mb-4 hover:bg-indigo-700">Ambil Foto</button>
+                            <button id="btn-retake" onclick="app.retakePhoto()" class="hidden relative z-10 bg-slate-800 text-white px-4 py-2 rounded-md text-sm shadow mt-auto mb-4 hover:bg-slate-900">Ulangi</button>
+                            <canvas id="photo-canvas" class="hidden"></canvas>
+                        </div>
+
+                        <!-- GPS Section -->
+                        <div class="border border-slate-200 rounded-lg p-4 bg-slate-50 flex flex-col items-center justify-center min-h-[220px]">
+                            <div id="location-display" class="text-center hidden">
+                                <div class="bg-emerald-100 text-emerald-700 p-3 rounded-full inline-block mb-3">
+                                    <i data-lucide="map-pin-check" class="w-6 h-6"></i>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-800">Lokasi Tercatat</p>
+                                <p id="location-coords" class="text-xs text-slate-500 mt-1 font-mono"></p>
+                            </div>
+
+                            <div id="location-controls" class="flex flex-col items-center gap-3">
+                                <button onclick="app.getLocation()" id="btn-location" class="p-3 bg-white border border-slate-200 text-slate-700 rounded-full shadow-sm hover:bg-slate-50 transition-colors">
+                                    <i data-lucide="map-pin" class="w-6 h-6"></i>
+                                </button>
+                                <span class="text-xs text-slate-500 font-medium">Ambil Lokasi (Opsional)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button onclick="app.submitLog()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+                        Kirim Laporan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Area Info (Kanan) -->
+            <div class="space-y-6">
+                <!-- Points Card -->
+                <div class="bg-indigo-600 text-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-sm font-medium text-indigo-200 uppercase tracking-wider mb-1">Total Poin Kinerja</h3>
+                    <div class="flex items-end gap-2">
+                        <span id="child-points" class="text-4xl font-bold leading-none">0</span>
+                        <span class="text-indigo-200 text-sm mb-1">Pts</span>
+                    </div>
+                </div>
+
+                <!-- Schedule Card -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="calendar-clock" class="text-slate-500 w-5 h-5"></i> Jadwal Tugas
+                    </h3>
+                    <div id="child-schedules" class="space-y-3">
+                        <!-- Diisi via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="portal-view" class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 hidden overflow-y-auto fade-in">
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" id="portal-stats">
+            <!-- Diisi via JS -->
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800">Master Data Log Aktivitas</h3>
+                <button onclick="app.fetchData()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Segarkan
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="px-6 py-4 font-medium border-b border-slate-200">Waktu</th>
+                            <th class="px-6 py-4 font-medium border-b border-slate-200">User</th>
+                            <th class="px-6 py-4 font-medium border-b border-slate-200">Aktivitas</th>
+                            <th class="px-6 py-4 font-medium border-b border-slate-200">Lokasi</th>
+                            <th class="px-6 py-4 font-medium border-b border-slate-200">Lampiran</th>
+                        </tr>
+                    </thead>
+                    <tbody id="portal-logs-table" class="divide-y divide-slate-100 text-sm">
+                        <!-- Diisi via JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="empty-state" class="p-10 text-center hidden">
+                <i data-lucide="database" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
+                <p class="text-slate-500 font-medium">Belum ada data terekam.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Inisialisasi Icons
+        lucide.createIcons();
+
+        // Data Mock untuk Preview (Fallback jika tidak jalan di Google Apps Script)
+        const MOCK_DB = {
+            users: [
+                { id: 'u1', username: 'anak1', password: '123', name: 'John Doe', role: 'anak', parentId: 'p1', points: 120 },
+                { id: 'u2', username: 'anak2', password: '123', name: 'Jane Smith', role: 'anak', parentId: 'p1', points: 80 },
+                { id: 'p1', username: 'ortu1', password: '123', name: 'Mr. Doe', role: 'ortu', parentId: null, points: 0 },
+                { id: 'a1', username: 'admin', password: 'admin123', name: 'System Admin', role: 'admin', parentId: null, points: 0 }
+            ],
+            logs: [],
+            schedules: [
+                { id: 's1', userId: 'u1', time: '08:00', task: 'Mulai Belajar' },
+                { id: 's2', userId: 'u1', time: '13:00', task: 'Makan Siang' },
+                { id: 's3', userId: 'u2', time: '15:00', task: 'Kursus Bahasa' }
+            ]
+        };
+
+        const ACTIVITIES = [
+            { id: 'Makan', icon: 'coffee' },
+            { id: 'Mandi', icon: 'droplet' },
+            { id: 'Belajar', icon: 'book-open' },
+            { id: 'Les', icon: 'users' },
+            { id: 'Tidur', icon: 'moon' }
+        ];
+
+        // Core Application State & Logic
+        const app = {
+            currentUser: null,
+            currentLog: { type: '', photo: null, lat: null, lng: null },
+            stream: null,
+
+            // PENTING: GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+            gasUrl: 'https://script.google.com/macros/s/AKfycbx3pnoHH_fhU5j6YFZ7CR-nJF9t_hitNJLvYaQvQxSAOwBr9mreNfhi4qWYJU5xzvpb/exec',
+
+            // Utils: Penghubung Frontend ke Google Apps Script API via Fetch
+            async runGoogleScript(action, ...args) {
+                if (this.gasUrl === 'URL_GAS_ANDA_DISINI') {
+                    // Fallback Mock (Jika belum diisi URL GAS)
+                    console.warn("URL GAS belum di-set, menggunakan data MOCK");
+                    return new Promise((resolve) => {
+                        setTimeout(() => {
+                            if(action === 'login') resolve(app.mockLogin(args[0], args[1]));
+                            if(action === 'getData') resolve(app.mockGetData(args[0], args[1]));
+                            if(action === 'addLog') resolve(app.mockAddLog(args[0]));
+                        }, 500);
+                    });
+                }
+
+                try {
+                    let payload = { action: action };
+                    if (action === 'login') { payload.username = args[0]; payload.password = args[1]; }
+                    if (action === 'getData') { payload.userId = args[0]; payload.role = args[1]; }
+                    if (action === 'addLog') { payload.data = args[0]; }
+
+                    // Gunakan text/plain untuk bypass CORS preflight pada Google Apps Script
+                    const response = await fetch(this.gasUrl, {
+                        method: 'POST',
+                        body: JSON.stringify(payload),
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8',
+                        }
+                    });
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error("API Error:", error);
+                    throw error;
+                }
+            },
+
+            // Mock Functions
+            mockLogin(username, password) {
+                const user = MOCK_DB.users.find(u => u.username === username && u.password === password);
+                if(user) {
+                    let u = {...user}; delete u.password;
+                    return { success: true, user: u };
+                }
+                return { success: false, message: 'Username/Password salah' };
+            },
+            mockGetData(userId, role) {
+                let logs = [...MOCK_DB.logs].reverse();
+                let schedules = [...MOCK_DB.schedules];
+                let users = MOCK_DB.users.map(u => { let t={...u}; delete t.password; return t; });
+                
+                let result = { logs: [], schedules: [], users: users };
+                if (role === 'anak') {
+                    result.logs = logs.filter(l => l.userId === userId);
+                    result.schedules = schedules.filter(s => s.userId === userId);
+                } else if (role === 'ortu') {
+                    const childrenIds = users.filter(u => u.parentId === userId).map(u => u.id);
+                    result.logs = logs.filter(l => childrenIds.includes(l.userId));
+                    result.schedules = schedules.filter(s => childrenIds.includes(s.userId));
+                } else if (role === 'admin') {
+                    result.logs = logs;
+                    result.schedules = schedules;
+                }
+                return { success: true, data: result };
+            },
+            mockAddLog(data) {
+                const newLog = {
+                    id: 'LOG' + Date.now(),
+                    userId: data.userId,
+                    userName: data.userName,
+                    type: data.type,
+                    timestamp: new Date().toISOString(),
+                    lat: data.lat, lng: data.lng, photo: data.photo
+                };
+                MOCK_DB.logs.push(newLog);
+                const userIdx = MOCK_DB.users.findIndex(u => u.id === data.userId);
+                if(userIdx > -1) MOCK_DB.users[userIdx].points += 10;
+                return { success: true, message: 'Berhasil (Mock)' };
+            },
+
+            // UI Helpers
+            showToast(msg, type = 'success') {
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-message').textContent = msg;
+                const icon = document.getElementById('toast-icon');
+                
+                toast.className = `fixed top-4 right-4 z-50 transform transition-all duration-300 flex items-center gap-3 px-6 py-4 rounded-lg shadow-xl font-medium text-sm text-white ${type === 'error' ? 'bg-rose-500' : 'bg-slate-800'}`;
+                
+                icon.setAttribute('data-lucide', type === 'error' ? 'alert-circle' : 'check-circle');
+                lucide.createIcons();
+                
+                // Animate in
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-[-150%]', 'opacity-0');
+                    toast.classList.add('translate-y-0', 'opacity-100');
+                }, 10);
+                
+                // Animate out
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-[-150%]', 'opacity-0');
+                }, 3000);
+            },
+
+            switchView(viewId) {
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('child-view').classList.add('hidden');
+                document.getElementById('portal-view').classList.add('hidden');
+                document.getElementById(viewId).classList.remove('hidden');
+            },
+
+            // Authentication
+            async login() {
+                const u = document.getElementById('username').value;
+                const p = document.getElementById('password').value;
+                const btn = document.getElementById('btn-login');
+                
+                btn.disabled = true;
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...`;
+                lucide.createIcons();
+
+                try {
+                    const res = await this.runGoogleScript('loginUser', u, p);
+                    if (res.success) {
+                        this.currentUser = res.user;
+                        this.setupHeader();
+                        this.routeUser();
+                        this.showToast('Login berhasil!');
+                    } else {
+                        this.showToast(res.message, 'error');
+                    }
+                } catch (err) {
+                    this.showToast('Terjadi kesalahan koneksi', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>Masuk Sistem</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+                    lucide.createIcons();
+                }
+            },
+
+            logout() {
+                this.currentUser = null;
+                document.getElementById('main-header').classList.add('hidden');
+                this.switchView('login-view');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                this.stopCamera();
+            },
+
+            setupHeader() {
+                document.getElementById('main-header').classList.remove('hidden');
+                document.getElementById('header-user-name').textContent = this.currentUser.name;
+                document.getElementById('header-user-role').textContent = this.currentUser.role;
+            },
+
+            routeUser() {
+                if (this.currentUser.role === 'anak') {
+                    this.switchView('child-view');
+                    this.renderChildUI();
+                } else {
+                    this.switchView('portal-view');
+                }
+                this.fetchData(); // Load data initially
+            },
+
+            renderChildUI() {
+                // Render Activity Buttons
+                const container = document.getElementById('activity-buttons');
+                container.innerHTML = ACTIVITIES.map(act => `
+                    <button onclick="app.selectActivity('${act.id}')" id="btn-act-${act.id}" class="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg bg-white text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 transition-all act-btn">
+                        <i data-lucide="${act.icon}" class="w-6 h-6 mb-2"></i>
+                        <span class="text-xs font-semibold">${act.id}</span>
+                    </button>
+                `).join('');
+                lucide.createIcons();
+                
+                // Reset states
+                this.currentLog = { type: '', photo: null, lat: null, lng: null };
+                this.resetCameraUI();
+                this.resetLocationUI();
+            },
+
+            selectActivity(id) {
+                this.currentLog.type = id;
+                document.querySelectorAll('.act-btn').forEach(b => {
+                    b.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-600', 'ring-2', 'ring-indigo-200');
+                    b.classList.add('border-slate-200', 'bg-white', 'text-slate-600');
+                });
+                const selected = document.getElementById(`btn-act-${id}`);
+                selected.classList.remove('border-slate-200', 'bg-white', 'text-slate-600');
+                selected.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-600', 'ring-2', 'ring-indigo-200');
+            },
+
+            // Fitur Kamera (HTML5)
+            async startCamera() {
+                try {
+                    this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                    const video = document.getElementById('camera-stream');
+                    video.srcObject = this.stream;
+                    
+                    document.getElementById('camera-controls').classList.add('hidden');
+                    video.classList.remove('hidden');
+                    document.getElementById('btn-snap').classList.remove('hidden');
+                } catch (err) {
+                    this.showToast('Gagal mengakses kamera: ' + err.message, 'error');
+                }
+            },
+
+            takePhoto() {
+                const video = document.getElementById('camera-stream');
+                const canvas = document.getElementById('photo-canvas');
+                const preview = document.getElementById('photo-preview');
+                
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                
+                // Kompresi ke WebP base64
+                this.currentLog.photo = canvas.toDataURL('image/webp', 0.7);
+                
+                preview.src = this.currentLog.photo;
+                video.classList.add('hidden');
+                preview.classList.remove('hidden');
+                document.getElementById('btn-snap').classList.add('hidden');
+                document.getElementById('btn-retake').classList.remove('hidden');
+                
+                this.stopCamera();
+            },
+
+            retakePhoto() {
+                this.currentLog.photo = null;
+                document.getElementById('photo-preview').classList.add('hidden');
+                document.getElementById('btn-retake').classList.add('hidden');
+                this.startCamera();
+            },
+
+            stopCamera() {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
+                    this.stream = null;
+                }
+            },
+
+            resetCameraUI() {
+                this.stopCamera();
+                document.getElementById('camera-stream').classList.add('hidden');
+                document.getElementById('photo-preview').classList.add('hidden');
+                document.getElementById('btn-snap').classList.add('hidden');
+                document.getElementById('btn-retake').classList.add('hidden');
+                document.getElementById('camera-controls').classList.remove('hidden');
+            },
+
+            // Fitur Lokasi (HTML5)
+            getLocation() {
+                const btn = document.getElementById('btn-location');
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i>`;
+                lucide.createIcons();
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            this.currentLog.lat = position.coords.latitude;
+                            this.currentLog.lng = position.coords.longitude;
+                            
+                            document.getElementById('location-controls').classList.add('hidden');
+                            document.getElementById('location-display').classList.remove('hidden');
+                            document.getElementById('location-coords').textContent = `${this.currentLog.lat.toFixed(4)}, ${this.currentLog.lng.toFixed(4)}`;
+                        },
+                        (error) => {
+                            this.showToast('Gagal mendapatkan lokasi', 'error');
+                            btn.innerHTML = `<i data-lucide="map-pin" class="w-6 h-6"></i>`;
+                            lucide.createIcons();
+                        }
+                    );
+                } else {
+                    this.showToast('Browser tidak support GPS', 'error');
+                }
+            },
+
+            resetLocationUI() {
+                document.getElementById('location-controls').classList.remove('hidden');
+                document.getElementById('location-display').classList.add('hidden');
+                const btn = document.getElementById('btn-location');
+                btn.innerHTML = `<i data-lucide="map-pin" class="w-6 h-6"></i>`;
+                lucide.createIcons();
+            },
+
+            // Submit Log
+            async submitLog() {
+                if (!this.currentLog.type) {
+                    this.showToast('Pilih jenis aktivitas terlebih dahulu!', 'error');
+                    return;
+                }
+
+                const payload = {
+                    userId: this.currentUser.id,
+                    userName: this.currentUser.name,
+                    ...this.currentLog
+                };
+
+                try {
+                    const res = await this.runGoogleScript('addActivityLog', payload);
+                    if(res.success) {
+                        this.showToast('Laporan berhasil dikirim! (+10 Pts)');
+                        this.fetchData(); // Refresh data
+                        this.renderChildUI(); // Reset form
+                    } else {
+                        this.showToast(res.message, 'error');
+                    }
+                } catch(e) {
+                    this.showToast('Gagal mengirim data', 'error');
+                }
+            },
+
+            async fetchData() {
+                try {
+                    const res = await this.runGoogleScript('getDashboardData', this.currentUser.id, this.currentUser.role);
+                    if(res.success) {
+                        if(this.currentUser.role === 'anak') {
+                            this.updateChildView(res.data);
+                        } else {
+                            this.updatePortalView(res.data);
+                        }
+                    }
+                } catch(e) {
+                    console.error("Error fetching data:", e);
+                }
+            },
+
+            updateChildView(data) {
+                // Update Points (cari user di list users)
+                const me = data.users.find(u => u.id === this.currentUser.id);
+                if(me) document.getElementById('child-points').textContent = me.points || 0;
+
+                // Update Schedules
+                const container = document.getElementById('child-schedules');
+                if(data.schedules.length === 0) {
+                    container.innerHTML = `<p class="text-sm text-slate-500">Tidak ada jadwal hari ini.</p>`;
+                } else {
+                    container.innerHTML = data.schedules.map(s => `
+                        <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-md">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-1 rounded">${s.time}</span>
+                                <span class="text-sm font-medium text-slate-700">${s.task}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            },
+
+            updatePortalView(data) {
+                // Stats Card
+                const statsContainer = document.getElementById('portal-stats');
+                let targetUsers = data.users.filter(u => u.role === 'anak');
+                if(this.currentUser.role === 'ortu') {
+                    targetUsers = targetUsers.filter(u => u.parentId === this.currentUser.id);
+                }
+
+                statsContainer.innerHTML = `
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Total Anak Dipantau</div>
+                        <div class="text-3xl font-bold text-slate-800">${targetUsers.length}</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Total Log Masuk</div>
+                        <div class="text-3xl font-bold text-slate-800">${data.logs.length}</div>
+                    </div>
+                    <div class="bg-indigo-600 p-5 rounded-lg shadow-sm">
+                        <div class="text-xs text-indigo-200 uppercase font-bold tracking-wider mb-1">Poin Tertinggi</div>
+                        <div class="text-3xl font-bold text-white">${targetUsers.length > 0 ? Math.max(...targetUsers.map(u=>u.points||0)) : 0}</div>
+                    </div>
+                `;
+
+                // Table Data
+                const tbody = document.getElementById('portal-logs-table');
+                const emptyState = document.getElementById('empty-state');
+                
+                if(data.logs.length === 0) {
+                    tbody.innerHTML = '';
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    tbody.innerHTML = data.logs.map(log => {
+                        const date = new Date(log.timestamp);
+                        const timeStr = isNaN(date.getTime()) ? log.timestamp : date.toLocaleString('id-ID', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+                        
+                        let locationHtml = '<span class="text-slate-300">-</span>';
+                        if(log.lat && log.lng) {
+                            locationHtml = `<a href="https://maps.google.com/?q=${log.lat},${log.lng}" target="_blank" class="text-indigo-600 hover:underline flex items-center gap-1 text-xs"><i data-lucide="map-pin" class="w-3 h-3"></i> Peta</a>`;
+                        }
+
+                        let photoHtml = '<span class="text-slate-300">-</span>';
+                        if(log.photo) {
+                            // Untuk preview kecil
+                            photoHtml = `<a href="${log.photo}" target="_blank"><img src="${log.photo}" class="w-8 h-8 object-cover rounded border border-slate-200 hover:scale-150 transition-transform origin-right"></a>`;
+                        }
+
+                        return `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4 text-slate-500 text-xs">${timeStr}</td>
+                            <td class="px-6 py-4 font-semibold text-slate-800">${log.userName}</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-indigo-50 text-indigo-700 text-xs font-medium px-2 py-1 rounded border border-indigo-100">${log.type}</span>
+                            </td>
+                            <td class="px-6 py-4">${locationHtml}</td>
+                            <td class="px-6 py-4">${photoHtml}</td>
+                        </tr>
+                        `;
+                    }).join('');
+                    lucide.createIcons(); // Refresh icons inside table
+                }
+            }
+        };
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial view
+            app.switchView('login-view');
+            
+            // Register Service Worker untuk PWA
+            // Pengecekan protocol ditambahkan agar tidak error saat di-preview dalam iframe/blob
+            if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
+                navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker terdaftar!', reg))
+                .catch(err => console.error('Gagal daftar Service Worker', err));
+            } else {
+                console.log('Pendaftaran Service Worker dilewati (sedang di mode preview/sandbox).');
+            }
+        });
+    </script>
+</body>
+</html>
