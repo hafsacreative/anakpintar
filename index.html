@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Corporate Portal</title>
     
-    <!-- PWA Setup -->
-    <link rel="manifest" href="manifest.json">
+    <!-- PWA Setup - Ditambahkan ID agar bisa diinject via JS -->
+    <link rel="manifest" id="manifest-link" href="manifest.json">
     <meta name="theme-color" content="#1e293b">
     <link rel="apple-touch-icon" href="https://res.cloudinary.com/div5frz9v/image/upload/v1782222823/kotak_wtjzkr.jpg">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -238,19 +238,18 @@
             { id: 'Tidur', icon: 'moon' }
         ];
 
-        // Core Application State & Logic
         const app = {
             currentUser: null,
             currentLog: { type: '', photo: null, lat: null, lng: null },
             stream: null,
 
-            // PENTING: GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+            // URL Endpoint GAS Anda dibiarkan utuh
             gasUrl: 'https://script.google.com/macros/s/AKfycby_edx8Pe3r-rkWRFNXrvGQd1N8wY9FSmM6VKclXgih_DwtXq5k0D5zx4aBGM0f7tQe/exec',
 
             // Utils: Penghubung Frontend ke Google Apps Script API via Fetch
             async runGoogleScript(action, ...args) {
                 if (this.gasUrl === 'URL_GAS_ANDA_DISINI') {
-                    // Fallback Mock (Jika belum diisi URL GAS)
+                    // Fallback Mock
                     console.warn("URL GAS belum di-set, menggunakan data MOCK");
                     return new Promise((resolve) => {
                         setTimeout(() => {
@@ -283,7 +282,7 @@
                 }
             },
 
-            // Mock Functions
+            // Mock Functions (Fallback)
             mockLogin(username, password) {
                 const user = MOCK_DB.users.find(u => u.username === username && u.password === password);
                 if(user) {
@@ -357,7 +356,6 @@
                 document.getElementById(viewId).classList.remove('hidden');
             },
 
-            // Authentication
             async login() {
                 const u = document.getElementById('username').value;
                 const p = document.getElementById('password').value;
@@ -368,13 +366,16 @@
                 lucide.createIcons();
 
                 try {
-                    const res = await this.runGoogleScript('loginUser', u, p);
+                    // PERBAIKAN: Parameter string action diganti menjadi 'login' (sesuai ekspektasi backend GAS)
+                    const res = await this.runGoogleScript('login', u, p);
+                    
                     if (res.success) {
                         this.currentUser = res.user;
                         this.setupHeader();
                         this.routeUser();
                         this.showToast('Login berhasil!');
                     } else {
+                        // Menampilkan pesan error spesifik jika salah password atau action tidak dikenal
                         this.showToast(res.message, 'error');
                     }
                 } catch (err) {
@@ -408,11 +409,10 @@
                 } else {
                     this.switchView('portal-view');
                 }
-                this.fetchData(); // Load data initially
+                this.fetchData(); 
             },
 
             renderChildUI() {
-                // Render Activity Buttons
                 const container = document.getElementById('activity-buttons');
                 container.innerHTML = ACTIVITIES.map(act => `
                     <button onclick="app.selectActivity('${act.id}')" id="btn-act-${act.id}" class="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg bg-white text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 transition-all act-btn">
@@ -422,7 +422,6 @@
                 `).join('');
                 lucide.createIcons();
                 
-                // Reset states
                 this.currentLog = { type: '', photo: null, lat: null, lng: null };
                 this.resetCameraUI();
                 this.resetLocationUI();
@@ -498,7 +497,7 @@
                 document.getElementById('camera-controls').classList.remove('hidden');
             },
 
-            // Fitur Lokasi (HTML5)
+            // Fitur Lokasi GPS
             getLocation() {
                 const btn = document.getElementById('btn-location');
                 btn.innerHTML = `<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i>`;
@@ -533,7 +532,7 @@
                 lucide.createIcons();
             },
 
-            // Submit Log
+            // Submit Laporan
             async submitLog() {
                 if (!this.currentLog.type) {
                     this.showToast('Pilih jenis aktivitas terlebih dahulu!', 'error');
@@ -547,11 +546,12 @@
                 };
 
                 try {
-                    const res = await this.runGoogleScript('addActivityLog', payload);
+                    // PERBAIKAN: Parameter diganti menjadi 'addLog' agar sesuai ekspektasi doPost GAS
+                    const res = await this.runGoogleScript('addLog', payload);
                     if(res.success) {
                         this.showToast('Laporan berhasil dikirim! (+10 Pts)');
-                        this.fetchData(); // Refresh data
-                        this.renderChildUI(); // Reset form
+                        this.fetchData(); 
+                        this.renderChildUI(); 
                     } else {
                         this.showToast(res.message, 'error');
                     }
@@ -562,7 +562,8 @@
 
             async fetchData() {
                 try {
-                    const res = await this.runGoogleScript('getDashboardData', this.currentUser.id, this.currentUser.role);
+                    // PERBAIKAN: Parameter diganti menjadi 'getData' sesuai ekspektasi backend
+                    const res = await this.runGoogleScript('getData', this.currentUser.id, this.currentUser.role);
                     if(res.success) {
                         if(this.currentUser.role === 'anak') {
                             this.updateChildView(res.data);
@@ -576,11 +577,9 @@
             },
 
             updateChildView(data) {
-                // Update Points (cari user di list users)
                 const me = data.users.find(u => u.id === this.currentUser.id);
                 if(me) document.getElementById('child-points').textContent = me.points || 0;
 
-                // Update Schedules
                 const container = document.getElementById('child-schedules');
                 if(data.schedules.length === 0) {
                     container.innerHTML = `<p class="text-sm text-slate-500">Tidak ada jadwal hari ini.</p>`;
@@ -597,7 +596,6 @@
             },
 
             updatePortalView(data) {
-                // Stats Card
                 const statsContainer = document.getElementById('portal-stats');
                 let targetUsers = data.users.filter(u => u.role === 'anak');
                 if(this.currentUser.role === 'ortu') {
@@ -619,7 +617,6 @@
                     </div>
                 `;
 
-                // Table Data
                 const tbody = document.getElementById('portal-logs-table');
                 const emptyState = document.getElementById('empty-state');
                 
@@ -639,7 +636,6 @@
 
                         let photoHtml = '<span class="text-slate-300">-</span>';
                         if(log.photo) {
-                            // Untuk preview kecil
                             photoHtml = `<a href="${log.photo}" target="_blank"><img src="${log.photo}" class="w-8 h-8 object-cover rounded border border-slate-200 hover:scale-150 transition-transform origin-right"></a>`;
                         }
 
@@ -655,24 +651,44 @@
                         </tr>
                         `;
                     }).join('');
-                    lucide.createIcons(); // Refresh icons inside table
+                    lucide.createIcons();
                 }
             }
         };
 
-        // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
-            // Initial view
             app.switchView('login-view');
             
-            // Register Service Worker untuk PWA
-            // Pengecekan protocol ditambahkan agar tidak error saat di-preview dalam iframe/blob
+            // PERBAIKAN PWA: Membuat Manifest JSON secara otomatis (Inject Blob URL)
+            // Ini memecahkan masalah fitur Tambah ke Layar Utama yang gagal karena file manifest.json tidak ditemukan
+            try {
+                const manifestData = {
+                    "name": "Corporate Portal",
+                    "short_name": "Portal",
+                    "start_url": window.location.pathname,
+                    "display": "standalone",
+                    "background_color": "#f8fafc",
+                    "theme_color": "#1e293b",
+                    "icons": [{
+                        "src": "https://res.cloudinary.com/div5frz9v/image/upload/v1782222823/kotak_wtjzkr.jpg",
+                        "sizes": "512x512",
+                        "type": "image/jpeg",
+                        "purpose": "any maskable"
+                    }]
+                };
+                
+                const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+                const manifestUrl = URL.createObjectURL(manifestBlob);
+                document.getElementById('manifest-link').href = manifestUrl;
+            } catch(e) {
+                console.log("Gagal membuat manifest dinamis", e);
+            }
+
+            // Mendaftarkan Service Worker
             if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
                 navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('Service Worker terdaftar!', reg))
-                .catch(err => console.error('Gagal daftar Service Worker', err));
-            } else {
-                console.log('Pendaftaran Service Worker dilewati (sedang di mode preview/sandbox).');
+                .then(reg => console.log('Service Worker mencoba mendaftar.', reg))
+                .catch(err => console.log('Service Worker dilewati. Info: Buat sebuah file kosong bernama sw.js di hosting jika PWA masih rewel.', err));
             }
         });
     </script>
