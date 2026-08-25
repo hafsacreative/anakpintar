@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Corporate Portal</title>
     
-    <!-- REVISI PWA: Manifest inline menggunakan data URI agar terbaca tanpa file terpisah -->
+    <!-- REVISI PWA: Manifest inline disederhanakan. Dihapus script service worker blob yang bikin crash. -->
     <link rel="manifest" href='data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Corporate%20Portal%22%2C%22short_name%22%3A%22Portal%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f4f6f8%22%2C%22theme_color%22%3A%22%23008CEE%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fres.cloudinary.com%2Fdiv5frz9v%2Fimage%2Fupload%2Fv1782222823%2Fkotak_wtjzkr.jpg%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fres.cloudinary.com%2Fdiv5frz9v%2Fimage%2Fupload%2Fv1782222823%2Fkotak_wtjzkr.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%5D%7D'>
     <meta name="theme-color" content="#008CEE">
     <link rel="apple-touch-icon" href="https://res.cloudinary.com/div5frz9v/image/upload/v1782222823/kotak_wtjzkr.jpg">
@@ -287,7 +287,17 @@
             ],
             logs: [], schedules: []
         };
-        const ACTIVITIES = [ { id: 'Makan', icon: 'utensils', color: 'text-orange-500' }, { id: 'Mandi', icon: 'droplet', color: 'text-cyan-500' }, { id: 'Belajar', icon: 'book-open', color: 'text-indigo-500' }, { id: 'Les', icon: 'graduation-cap', color: 'text-purple-500' }, { id: 'Olahraga', icon: 'dribbble', color: 'text-rose-500' }, { id: 'Ibadah', icon: 'moon-star', color: 'text-emerald-500' }, { id: 'Lainnya', icon: 'layout-grid', color: 'text-slate-600' } ];
+        // REVISI: Tambahkan aktivitas Pulang Sekolah
+        const ACTIVITIES = [ 
+            { id: 'Pulang Sekolah', icon: 'school', color: 'text-yellow-500' },
+            { id: 'Makan', icon: 'utensils', color: 'text-orange-500' }, 
+            { id: 'Mandi', icon: 'droplet', color: 'text-cyan-500' }, 
+            { id: 'Belajar', icon: 'book-open', color: 'text-indigo-500' }, 
+            { id: 'Les', icon: 'graduation-cap', color: 'text-purple-500' }, 
+            { id: 'Olahraga', icon: 'dribbble', color: 'text-rose-500' }, 
+            { id: 'Ibadah', icon: 'moon-star', color: 'text-emerald-500' }, 
+            { id: 'Lainnya', icon: 'layout-grid', color: 'text-slate-600' } 
+        ];
 
         const app = {
             currentUser: null,
@@ -296,7 +306,7 @@
             tempProfileBase64: null, 
             
             // MASUKAN URL DEPLOY GOOGLE APPS SCRIPT ANDA DI SINI
-            gasUrl: 'https://script.google.com/macros/s/AKfycbyHn0zq_IM-HADWmIT6_peH_yv2K1HD34MWerEaopPb7MEOOENRx5CvxlRYuXr8sHEc/exec',
+            gasUrl: 'https://script.google.com/macros/s/AKfycbyn9e4-uoXKl7h-fSoE5z8Z6R_m44dVHlGT6j2yrOaC6z012cSMK76WX5veiylVQrSM/exec', // Ganti dengan URL yang valid jika sudah ada
 
             async runGoogleScript(action, ...args) {
                 if (this.gasUrl.includes('URL_GAS') || this.gasUrl === '' || window.location.hostname === "cdpn.io" || window.location.hostname === "localhost") {
@@ -382,7 +392,8 @@
 
                 if (this.currentUser.role === 'anak') {
                     document.getElementById('home-anak-content').classList.remove('hidden'); document.getElementById('home-admin-content').classList.add('hidden');
-                    document.getElementById('activity-grid').innerHTML = ACTIVITIES.map(act => `<button onclick="app.openCameraFor('${act.id}')" class="flex flex-col items-center gap-2 group"><div class="w-14 h-14 rounded-2xl menu-icon-wrapper flex items-center justify-center shadow-sm active:scale-95 transition-transform"><i data-lucide="${act.icon}" class="w-7 h-7 ${act.color}"></i></div><span class="text-[11px] font-semibold text-slate-700 text-center">${act.id}</span></button>`).join('');
+                    // Render Activity Grid
+                    document.getElementById('activity-grid').innerHTML = ACTIVITIES.map(act => `<button onclick="app.openCameraFor('${act.id}')" class="flex flex-col items-center gap-2 group"><div class="w-14 h-14 rounded-2xl menu-icon-wrapper flex items-center justify-center shadow-sm active:scale-95 transition-transform"><i data-lucide="${act.icon}" class="w-7 h-7 ${act.color}"></i></div><span class="text-[11px] font-semibold text-slate-700 text-center leading-tight">${act.id}</span></button>`).join('');
                     lucide.createIcons();
                 } else {
                     document.getElementById('home-anak-content').classList.add('hidden'); document.getElementById('home-admin-content').classList.remove('hidden');
@@ -568,19 +579,5 @@
         };
     </script>
 
-    <!-- REVISI PWA: Service Worker Inline Dummy agar tombol Install (Add to Home Screen) bisa muncul di Android/Chrome -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    self.addEventListener('install', e => self.skipWaiting());
-                    self.addEventListener('activate', e => self.clients.claim());
-                    self.addEventListener('fetch', e => {}); 
-                `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-            });
-        }
-    </script>
 </body>
 </html>
