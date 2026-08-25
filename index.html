@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Corporate Portal</title>
     
-    <!-- REVISI PWA: Manifest inline disederhanakan. Dihapus script service worker blob yang bikin crash. -->
     <link rel="manifest" href='data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Corporate%20Portal%22%2C%22short_name%22%3A%22Portal%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f4f6f8%22%2C%22theme_color%22%3A%22%23008CEE%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fres.cloudinary.com%2Fdiv5frz9v%2Fimage%2Fupload%2Fv1782222823%2Fkotak_wtjzkr.jpg%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fres.cloudinary.com%2Fdiv5frz9v%2Fimage%2Fupload%2Fv1782222823%2Fkotak_wtjzkr.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%5D%7D'>
     <meta name="theme-color" content="#008CEE">
     <link rel="apple-touch-icon" href="https://res.cloudinary.com/div5frz9v/image/upload/v1782222823/kotak_wtjzkr.jpg">
@@ -177,7 +176,7 @@
 
     <div id="camera-modal" class="fixed inset-0 z-[60] bg-black hidden flex-col slide-up">
         <div class="relative flex-1 bg-black overflow-hidden">
-            <video id="camera-stream" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline></video>
+            <video id="camera-stream" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline webkit-playsinline></video>
             <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center bg-gradient-to-b from-black/70 to-transparent z-10">
                 <button onclick="window.app.closeCamera()" class="p-2 bg-black/40 text-white rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
                 <span class="text-white font-medium text-sm tracking-wide" id="camera-title">Ambil Foto</span>
@@ -272,14 +271,6 @@
     <script>
         lucide.createIcons();
 
-        // MOCK DB UNTUK PRATINJAU LOKAL
-        const MOCK_DB = {
-            users: [
-                { id: 'u1', username: 'anak', password: '123', name: 'Alif (Anak)', role: 'anak', parentId: 'p1', points: 120, phone: '0812345678', profilePhoto: '' },
-                { id: 'p1', username: 'ortu', password: '123', name: 'Ayah (Ortu)', role: 'ortu', parentId: null, points: 0, phone: '', profilePhoto: '' }
-            ],
-            logs: [], schedules: []
-        };
         const ACTIVITIES = [ 
             { id: 'Pulang Sekolah', icon: 'school', color: 'text-yellow-500' },
             { id: 'Makan', icon: 'utensils', color: 'text-orange-500' }, 
@@ -297,21 +288,18 @@
             stream: null,
             tempProfileBase64: null, 
             
-            // MASUKAN URL DEPLOY GOOGLE APPS SCRIPT ANDA DI SINI
-            gasUrl: 'https://script.google.com/macros/s/AKfycbyaaXUiKBsdn_AwR8nU8r_xubM9cGZp2eejBhUsBtu9kVyaupTFRCE_J-adaXroxFNr/exec', 
+            // ========================================================
+            // MASUKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
+            // ========================================================
+            gasUrl: 'https://script.google.com/macros/s/AKfycbx1-aG1uF64bsT79FRdFZcfXhhTygF2AdreuLFS7_li7zyhUjrMCFtKZgiGsflnCeb4/exec', 
 
             async runGoogleScript(action, ...args) {
-                if (this.gasUrl.includes('URL_GAS') || this.gasUrl === '' || window.location.hostname === "cdpn.io" || window.location.hostname === "localhost") {
-                    return new Promise((resolve) => {
-                        setTimeout(() => {
-                            if(action === 'login') resolve(this.mockLogin(args[0], args[1]));
-                            if(action === 'getData') resolve(this.mockGetData(args[0], args[1]));
-                            if(action === 'addLog') resolve(this.mockAddLog(args[0]));
-                            if(action === 'registerChild') resolve(this.mockRegisterChild(args[0]));
-                            if(action === 'editProfile') resolve(this.mockEditProfile(args[0]));
-                        }, 800);
-                    });
+                const isPreviewEnvironment = false; // Terhubung penuh ke Google Sheet
+                
+                if (isPreviewEnvironment || this.gasUrl.includes('URL_GAS') || this.gasUrl === '' || window.location.hostname === "cdpn.io" || window.location.hostname === "localhost") {
+                    return { success: false, message: 'Harap masukkan URL Apps Script yang valid.' };
                 }
+
                 let payload = { action: action };
                 if (action === 'login') { payload.username = args[0]; payload.password = args[1]; }
                 if (action === 'getData') { payload.userId = args[0]; payload.role = args[1]; }
@@ -321,15 +309,11 @@
                      const response = await fetch(this.gasUrl, { 
                          method: 'POST', 
                          body: JSON.stringify(payload), 
-                         headers: { 
-                             'Content-Type': 'text/plain;charset=utf-8' 
-                         },
+                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                          redirect: 'follow'
                      });
                      
-                     if (!response.ok) {
-                         throw new Error(`HTTP error! status: ${response.status}`);
-                     }
+                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                      return await response.json();
                 } catch (error) {
                     console.error("Fetch error:", error);
@@ -337,46 +321,19 @@
                 }
             },
 
-            mockLogin(u, p) {
-                const user = MOCK_DB.users.find(x => x.username === u && x.password === p);
-                if(user) { let us = {...user}; delete us.password; return { success: true, user: us }; }
-                return { success: false, message: 'Username atau password salah' };
-            },
-            mockGetData(userId, role) {
-                let logs = [...MOCK_DB.logs].reverse();
-                let result = { logs: [], schedules: MOCK_DB.schedules, users: MOCK_DB.users };
-                if (role === 'anak') {
-                    result.logs = logs.filter(l => l.userId === userId); result.schedules = MOCK_DB.schedules.filter(s => s.userId === userId);
-                } else if (role === 'ortu') {
-                    const childrenIds = MOCK_DB.users.filter(u => u.parentId === userId).map(u => u.id); result.logs = logs.filter(l => childrenIds.includes(l.userId));
-                }
-                return { success: true, data: result };
-            },
-            mockAddLog(data) {
-                MOCK_DB.logs.push({ id: 'LOG' + Date.now(), userId: data.userId, userName: data.userName, type: data.type, timestamp: new Date().toISOString(), lat: data.lat, lng: data.lng, photo: data.photo });
-                const u = MOCK_DB.users.find(x => x.id === data.userId); if(u) u.points += 10;
-                return { success: true, message: 'Berhasil' };
-            },
-            mockRegisterChild(data) {
-                MOCK_DB.users.push({ id: 'u'+Date.now(), username: data.username, password: data.password, name: data.name, role: 'anak', parentId: data.parentId, points: 0, phone:'', profilePhoto:'' });
-                return { success: true, message: 'Anak ditambahkan' };
-            },
-            mockEditProfile(data) {
-                let u = MOCK_DB.users.find(x => x.id === data.userId);
-                if(u) {
-                    u.name = data.name; u.phone = data.phone; 
-                    if(data.newPhotoBase64) u.profilePhoto = data.newPhotoBase64;
-                    return { success: true, message: 'Profil diupdate' };
-                }
-                return { success:false, message: 'User tidak ditemukan' };
-            },
-
-            showToast(msg, type = 'success') {
+            showToast(msg, type = 'success', duration = 3000) {
                 const toast = document.getElementById('toast');
                 document.getElementById('toast-message').textContent = msg;
                 document.getElementById('toast-icon').setAttribute('data-lucide', type === 'error' ? 'alert-circle' : 'check-circle');
+                if (type === 'error') {
+                    toast.classList.replace('text-slate-800', 'text-rose-600');
+                    toast.classList.replace('bg-white', 'bg-rose-50');
+                } else {
+                    toast.classList.replace('text-rose-600', 'text-slate-800');
+                    toast.classList.replace('bg-rose-50', 'bg-white');
+                }
                 lucide.createIcons(); toast.classList.remove('translate-y-[-150%]', 'opacity-0');
-                setTimeout(() => { toast.classList.add('translate-y-[-150%]', 'opacity-0'); }, 3000);
+                setTimeout(() => { toast.classList.add('translate-y-[-150%]', 'opacity-0'); }, duration);
             },
 
             async login() {
@@ -388,15 +345,12 @@
                         this.currentUser = res.user; 
                         this.initApp(); 
                         this.showToast(`Selamat datang, ${this.currentUser.name}!`); 
-                    } 
-                    else { 
+                    } else { 
                         this.showToast(res.message || 'Gagal login', 'error'); 
                     }
                 } catch (err) { 
                     this.showToast('Gagal koneksi ke server', 'error'); 
-                    console.error("Login Error: ", err);
-                }
-                finally { btn.innerHTML = `<span>Masuk</span>`; }
+                } finally { btn.innerHTML = `<span>Masuk</span>`; }
             },
 
             logout() { 
@@ -451,14 +405,8 @@
             async fetchData() {
                 try {
                     const res = await this.runGoogleScript('getData', this.currentUser.id, this.currentUser.role);
-                    if(res.success) {
-                        this.updateUI(res.data);
-                    } else {
-                        console.error("Fetch data failed: ", res.message);
-                    }
-                } catch(e) {
-                     console.error("Fetch data error: ", e);
-                }
+                    if(res.success) this.updateUI(res.data);
+                } catch(e) { console.error(e); }
             },
 
             updateUI(data) {
@@ -525,10 +473,31 @@
                 if(file) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        this.tempProfileBase64 = e.target.result;
-                        document.getElementById('edit-photo-preview').src = this.tempProfileBase64;
-                        document.getElementById('edit-photo-preview').classList.remove('hidden');
-                        document.getElementById('edit-photo-icon').classList.add('hidden');
+                        // Kompresi gambar profil agar aman masuk spreadsheet
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const MAX_WIDTH = 300;
+                            const MAX_HEIGHT = 300;
+                            let width = img.width;
+                            let height = img.height;
+
+                            if (width > height) {
+                                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                            } else {
+                                if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            this.tempProfileBase64 = canvas.toDataURL('image/jpeg', 0.5);
+
+                            document.getElementById('edit-photo-preview').src = this.tempProfileBase64;
+                            document.getElementById('edit-photo-preview').classList.remove('hidden');
+                            document.getElementById('edit-photo-icon').classList.add('hidden');
+                        };
+                        img.src = e.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
@@ -583,10 +552,15 @@
                 this.autoGetLocation();
                 
                 try { 
-                    this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1024 } } }); 
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        throw new Error("Kamera tidak didukung browser ini.");
+                    }
+                    this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 640 } } }); 
                     video.srcObject = this.stream; 
+                    video.play().catch(e => console.log(e));
                 } catch (err) { 
-                    console.warn('Gagal buka kamera. Silakan gunakan tombol upload.', err); 
+                    console.warn('Gagal buka kamera:', err); 
+                    this.showToast("Kamera diblokir/tidak tersedia. Gunakan tombol galeri di kiri.", "error", 4000);
                 }
             },
             closeCamera() { 
@@ -600,9 +574,26 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        this.currentLog.photo = e.target.result;
-                        this.closeCamera();
-                        this.openSubmitModal();
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.getElementById('photo-canvas');
+                            const ctx = canvas.getContext('2d');
+                            let width = img.width;
+                            let height = img.height;
+                            const MAX_SIZE = 600;
+                            if (width > height) {
+                                if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                            } else {
+                                if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            this.currentLog.photo = canvas.toDataURL('image/jpeg', 0.5);
+                            this.closeCamera();
+                            this.openSubmitModal();
+                        };
+                        img.src = e.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
@@ -610,19 +601,37 @@
             
             autoGetLocation() {
                 const ind = document.getElementById('gps-indicator'); ind.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Lokasi...`; lucide.createIcons(); ind.classList.remove('hidden');
-                if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((pos) => { this.currentLog.lat = pos.coords.latitude; this.currentLog.lng = pos.coords.longitude; ind.classList.add('hidden'); }, () => { ind.classList.add('hidden'); }, { timeout: 5000 }); } else { ind.classList.add('hidden'); }
+                if (navigator.geolocation) { 
+                    navigator.geolocation.getCurrentPosition((pos) => { 
+                        this.currentLog.lat = pos.coords.latitude; 
+                        this.currentLog.lng = pos.coords.longitude; 
+                        ind.classList.add('hidden'); 
+                    }, () => { 
+                        ind.classList.add('hidden'); 
+                    }, { timeout: 5000 }); 
+                } else { ind.classList.add('hidden'); }
             },
             takePhoto() {
                 const video = document.getElementById('camera-stream');
                 if (!video.srcObject) {
-                    this.showToast("Kamera tidak aktif. Gunakan tombol unggah foto.", "error");
+                    this.showToast("Kamera tidak aktif. Gunakan tombol galeri di kiri.", "error");
                     return;
                 }
                 const canvas = document.getElementById('photo-canvas'), ctx = canvas.getContext('2d');
-                let scale = 1; if(video.videoWidth > 800) scale = 800 / video.videoWidth; 
-                canvas.width = video.videoWidth * scale; canvas.height = video.videoHeight * scale; ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                this.currentLog.photo = canvas.toDataURL('image/jpeg', 0.6); 
-                this.closeCamera(); this.openSubmitModal();
+                let width = video.videoWidth || 640;
+                let height = video.videoHeight || 480;
+                const MAX_SIZE = 600;
+                if (width > height) {
+                    if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                } else {
+                    if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                }
+                canvas.width = width; 
+                canvas.height = height; 
+                ctx.drawImage(video, 0, 0, width, height);
+                this.currentLog.photo = canvas.toDataURL('image/jpeg', 0.5); 
+                this.closeCamera(); 
+                this.openSubmitModal();
             },
             openSubmitModal() {
                 document.getElementById('submit-modal').classList.remove('hidden'); document.getElementById('submit-modal').classList.add('flex');
@@ -632,9 +641,10 @@
             },
             
             retakePhoto() { document.getElementById('submit-modal').classList.add('hidden'); document.getElementById('submit-modal').classList.remove('flex'); this.openCameraFor(this.currentLog.type); },
+            
             async submitLog() {
                 const btn = document.getElementById('btn-submit-log'); if(btn.disabled) return; btn.disabled = true;
-                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Sedang Mengunggah Foto...`; lucide.createIcons();
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Sedang Mengunggah...`; lucide.createIcons();
                 const desc = document.getElementById('log-description').value.trim();
                 const payload = { userId: this.currentUser.id, userName: this.currentUser.name, type: desc ? `${this.currentLog.type} - ${desc}` : this.currentLog.type, photo: this.currentLog.photo, lat: this.currentLog.lat, lng: this.currentLog.lng };
                 try {
@@ -645,9 +655,16 @@
                         document.getElementById('submit-modal').classList.remove('flex');
                         document.getElementById('log-description').value = '';
                         this.switchTab('history'); 
-                    } 
-                    else { this.showToast(res.message, 'error'); }
-                } catch(e) { this.showToast('Gagal terkirim', 'error'); console.error(e); } finally { btn.disabled = false; btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i><span>Kirim Laporan</span>`; lucide.createIcons(); }
+                    } else { 
+                        this.showToast(res.message || 'Gagal mengirim laporan', 'error', 5000); 
+                    }
+                } catch(e) { 
+                    this.showToast('Gagal terkirim', 'error'); 
+                } finally { 
+                    btn.disabled = false; 
+                    btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i><span>Kirim Laporan</span>`; 
+                    lucide.createIcons(); 
+                }
             }
         };
     </script>
