@@ -75,8 +75,9 @@
                             <h1 class="text-2xl font-bold" id="user-greeting">Hai, User!</h1>
                             <p class="text-blue-100 text-sm" id="user-role-badge">Role Anda</p>
                         </div>
-                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                            <i data-lucide="user" class="w-6 h-6 text-white"></i>
+                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm overflow-hidden border-2 border-white/30" id="header-avatar-container">
+                            <i data-lucide="user" class="w-6 h-6 text-white" id="header-avatar-icon"></i>
+                            <img id="header-avatar-img" class="w-full h-full object-cover hidden">
                         </div>
                     </div>
                     
@@ -94,7 +95,6 @@
                     </div>
                 </div>
 
-                <!-- Konten Anak -->
                 <div id="home-anak-content" class="px-5 pt-10 pb-5 hidden">
                     <h3 class="font-bold text-lg mb-4 text-slate-800">Log Aktivitas Baru</h3>
                     <div class="grid grid-cols-4 gap-y-6 gap-x-2" id="activity-grid"></div>
@@ -103,7 +103,6 @@
                     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3" id="schedule-list"></div>
                 </div>
 
-                <!-- Konten Ortu/Admin -->
                 <div id="home-admin-content" class="px-5 pt-10 pb-5 hidden">
                     <h3 class="font-bold text-lg mb-4 text-slate-800">Ringkasan Sistem</h3>
                     <div class="grid grid-cols-2 gap-4 mb-6">
@@ -118,7 +117,6 @@
                             <h4 class="text-2xl font-bold text-slate-800" id="stat-logs">0</h4>
                         </div>
                     </div>
-
                     <button onclick="app.openRegisterModal()" class="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2">
                         <i data-lucide="user-plus" class="w-5 h-5"></i> Tambah Akun Anak
                     </button>
@@ -131,9 +129,7 @@
                     <h2 class="text-2xl font-bold text-slate-800" id="history-title">Riwayat Log</h2>
                     <span class="bg-slate-200 text-slate-600 text-xs px-3 py-1 rounded-full font-bold" id="history-count">0 Data</span>
                 </div>
-                
                 <div id="history-list" class="space-y-4"></div>
-                
                 <div id="history-empty" class="hidden text-center py-20">
                     <i data-lucide="inbox" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
                     <p class="text-slate-500 font-medium">Belum ada aktivitas terekam.</p>
@@ -142,13 +138,21 @@
 
             <!-- ====== TAB: PROFILE ====== -->
             <div id="tab-profile" class="w-full max-w-lg mx-auto hidden fade-in px-5 pt-10">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6">Profil Saya</h2>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center mb-6">
-                    <div class="w-20 h-20 bg-slate-100 rounded-full mx-auto flex items-center justify-center mb-4">
-                        <i data-lucide="user-circle" class="w-12 h-12 text-slate-400"></i>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Profil Saya</h2>
+                    <button onclick="app.openEditProfileModal()" class="text-sm font-semibold text-gopay-blue bg-blue-50 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i> Edit
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center mb-6 relative">
+                    <div class="w-24 h-24 bg-slate-100 rounded-full mx-auto flex items-center justify-center mb-4 overflow-hidden shadow-inner relative border-4 border-white">
+                        <i data-lucide="user-circle" class="w-14 h-14 text-slate-400" id="profile-avatar-icon"></i>
+                        <img id="profile-avatar-img" class="w-full h-full object-cover hidden absolute inset-0">
                     </div>
                     <h3 class="text-xl font-bold text-slate-800" id="profile-name">Nama</h3>
-                    <p class="text-slate-500 text-sm mb-4" id="profile-username">@username</p>
+                    <p class="text-slate-500 text-sm mb-1" id="profile-username">@username</p>
+                    <p class="text-slate-500 text-sm mb-4 font-medium" id="profile-phone"><i data-lucide="phone" class="w-3 h-3 inline"></i> Belum ada nomor</p>
                     <span class="inline-block bg-blue-50 text-gopay-blue px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide" id="profile-role">ROLE</span>
                 </div>
                 <button onclick="app.logout()" class="w-full bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2">
@@ -175,7 +179,9 @@
         </nav>
     </div>
 
-    <!-- MODAL KAMERA -->
+    <!-- SEMUA MODAL DISINI -->
+    
+    <!-- Modal Kamera (Log) -->
     <div id="camera-modal" class="fixed inset-0 z-[60] bg-black hidden flex-col slide-up">
         <div class="relative flex-1 bg-black overflow-hidden">
             <video id="camera-stream" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline></video>
@@ -196,7 +202,7 @@
         <canvas id="photo-canvas" class="hidden"></canvas>
     </div>
 
-    <!-- MODAL PREVIEW SEBELUM KIRIM -->
+    <!-- Modal Preview Submit Log -->
     <div id="submit-modal" class="fixed inset-0 z-[70] bg-white hidden flex-col slide-up">
         <div class="p-4 flex items-center justify-between border-b border-slate-100">
             <button onclick="app.retakePhoto()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-full"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
@@ -209,14 +215,8 @@
                 <div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded" id="preview-timestamp"></div>
             </div>
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-                <div class="flex items-start gap-3 mb-2">
-                    <i data-lucide="tag" class="w-5 h-5 text-indigo-500"></i>
-                    <div><p class="text-xs text-slate-500 font-medium">Aktivitas</p><p class="text-sm font-bold text-slate-800" id="preview-type">-</p></div>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i data-lucide="map-pin" class="w-5 h-5 text-emerald-500"></i>
-                    <div><p class="text-xs text-slate-500 font-medium">GPS</p><p class="text-xs font-semibold text-slate-800" id="preview-location">Mencari...</p></div>
-                </div>
+                <div class="flex items-start gap-3 mb-2"><i data-lucide="tag" class="w-5 h-5 text-indigo-500"></i><div><p class="text-xs text-slate-500 font-medium">Aktivitas</p><p class="text-sm font-bold text-slate-800" id="preview-type">-</p></div></div>
+                <div class="flex items-start gap-3"><i data-lucide="map-pin" class="w-5 h-5 text-emerald-500"></i><div><p class="text-xs text-slate-500 font-medium">GPS</p><p class="text-xs font-semibold text-slate-800" id="preview-location">Mencari...</p></div></div>
             </div>
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
                 <label class="block text-xs font-bold text-slate-700 mb-2 uppercase">Catatan</label>
@@ -230,77 +230,74 @@
         </div>
     </div>
 
-    <!-- MODAL TAMBAH ANAK (KHUSUS ORTU) -->
+    <!-- Modal Tambah Anak -->
     <div id="register-modal" class="fixed inset-0 z-[80] bg-black/50 hidden items-center justify-center p-4 fade-in">
         <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-xl slide-up">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="font-bold text-lg text-slate-800">Tambah Akun Anak</h3>
-                <button onclick="app.closeRegisterModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg text-slate-800">Tambah Akun Anak</h3><button onclick="app.closeRegisterModal()" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <form onsubmit="event.preventDefault(); app.submitNewChild();" class="space-y-4">
-                <div>
-                    <label class="text-xs font-bold text-slate-500 mb-1 block">Nama Anak</label>
-                    <input type="text" id="reg-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500 mb-1 block">Username Login</label>
-                    <input type="text" id="reg-username" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500 mb-1 block">Password</label>
-                    <input type="password" id="reg-password" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue">
-                </div>
-                <button type="submit" id="btn-register" class="w-full bg-emerald-500 text-white font-bold py-3 mt-2 rounded-xl shadow-md flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i> Simpan Data
-                </button>
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">Nama Anak</label><input type="text" id="reg-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">Username Login</label><input type="text" id="reg-username" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">Password</label><input type="password" id="reg-password" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
+                <button type="submit" id="btn-register" class="w-full bg-emerald-500 text-white font-bold py-3 mt-2 rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-5 h-5"></i> Simpan</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL LIHAT FOTO FULL (FITUR BARU) -->
+    <!-- Modal Edit Profile -->
+    <div id="edit-profile-modal" class="fixed inset-0 z-[80] bg-black/50 hidden items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-xl slide-up">
+            <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg text-slate-800">Edit Profil</h3><button onclick="app.closeEditProfileModal()" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            
+            <form onsubmit="event.preventDefault(); app.submitEditProfile();" class="space-y-4">
+                <!-- Ubah Foto -->
+                <div class="text-center mb-4">
+                    <label for="edit-photo-input" class="inline-block relative cursor-pointer group">
+                        <div class="w-20 h-20 bg-slate-100 rounded-full mx-auto flex items-center justify-center overflow-hidden border-2 border-slate-200 group-hover:border-gopay-blue transition">
+                            <img id="edit-photo-preview" class="w-full h-full object-cover hidden">
+                            <i data-lucide="camera" class="w-8 h-8 text-slate-400 absolute" id="edit-photo-icon"></i>
+                        </div>
+                        <p class="text-[10px] font-bold text-gopay-blue mt-2">Ganti Foto</p>
+                    </label>
+                    <input type="file" id="edit-photo-input" accept="image/*" class="hidden" onchange="app.handleProfilePhotoSelect(event)">
+                </div>
+
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">Nama Lengkap</label><input type="text" id="edit-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">Nomor HP</label><input type="tel" id="edit-phone" placeholder="08..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
+                
+                <button type="submit" id="btn-edit-profile" class="w-full bg-gopay-blue text-white font-bold py-3 mt-2 rounded-xl flex items-center justify-center gap-2 shadow-md"><i data-lucide="check" class="w-5 h-5"></i> Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Lihat Foto Full -->
     <div id="image-modal" class="fixed inset-0 z-[90] bg-black/95 hidden flex-col fade-in">
-        <div class="p-4 flex justify-end">
-            <button onclick="app.closeImageModal()" class="p-2 bg-white/20 text-white rounded-full backdrop-blur"><i data-lucide="x" class="w-6 h-6"></i></button>
-        </div>
-        <div class="flex-1 flex items-center justify-center p-4">
-            <img id="full-image-preview" src="" class="max-w-full max-h-full object-contain rounded-xl">
-        </div>
+        <div class="p-4 flex justify-end"><button onclick="app.closeImageModal()" class="p-2 bg-white/20 text-white rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+        <div class="flex-1 flex items-center justify-center p-4"><img id="full-image-preview" src="" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl"></div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // MOCK DB Agar Pratinjau Tetap Aktif jika API belum diset
+        // MOCK DB UNTUK PRATINJAU LOKAL
         const MOCK_DB = {
             users: [
-                { id: 'u1', username: 'anak', password: '123', name: 'Alif (Anak)', role: 'anak', parentId: 'p1', points: 120 },
-                { id: 'p1', username: 'ortu', password: '123', name: 'Ayah (Ortu)', role: 'ortu', parentId: null, points: 0 }
+                { id: 'u1', username: 'anak', password: '123', name: 'Alif (Anak)', role: 'anak', parentId: 'p1', points: 120, phone: '0812345678', profilePhoto: '' },
+                { id: 'p1', username: 'ortu', password: '123', name: 'Ayah (Ortu)', role: 'ortu', parentId: null, points: 0, phone: '', profilePhoto: '' }
             ],
-            logs: [],
-            schedules: [{ id: 's1', userId: 'u1', time: '08:00', task: 'Mulai Belajar Online' }]
+            logs: [], schedules: []
         };
-
-        const ACTIVITIES = [
-            { id: 'Makan', icon: 'utensils', color: 'text-orange-500' },
-            { id: 'Mandi', icon: 'droplet', color: 'text-cyan-500' },
-            { id: 'Belajar', icon: 'book-open', color: 'text-indigo-500' },
-            { id: 'Les', icon: 'graduation-cap', color: 'text-purple-500' },
-            { id: 'Olahraga', icon: 'dribbble', color: 'text-rose-500' },
-            { id: 'Ibadah', icon: 'moon-star', color: 'text-emerald-500' },
-            { id: 'Pulang', icon: 'school', color: 'text-amber-500' },
-            { id: 'Lainnya', icon: 'layout-grid', color: 'text-slate-600' }
-        ];
+        const ACTIVITIES = [ { id: 'Makan', icon: 'utensils', color: 'text-orange-500' }, { id: 'Mandi', icon: 'droplet', color: 'text-cyan-500' }, { id: 'Belajar', icon: 'book-open', color: 'text-indigo-500' }, { id: 'Les', icon: 'graduation-cap', color: 'text-purple-500' }, { id: 'Olahraga', icon: 'dribbble', color: 'text-rose-500' }, { id: 'Ibadah', icon: 'moon-star', color: 'text-emerald-500' }, { id: 'Lainnya', icon: 'layout-grid', color: 'text-slate-600' } ];
 
         const app = {
             currentUser: null,
             currentLog: { type: '', photo: null, lat: null, lng: null, desc: '' },
             stream: null,
+            tempProfileBase64: null, // Untuk menampung foto profil baru
             
             // MASUKAN URL DEPLOY GOOGLE APPS SCRIPT ANDA DI SINI
-            gasUrl: 'https://script.google.com/macros/s/AKfycbywOkz4aCUZO0c8XPY4codtNEF8yaq2OBFdd1evTYeR0jtJu59nmGd4ED1YJarfimHQ/exec',
+            gasUrl: 'https://script.google.com/macros/s/AKfycbzTLWS2hgv9zq3NC-oYxSYYN4ovk69DguxzcY2ZNpO8SH8zy1PjCh4hAVC-x9Og2Rja/exec',
 
             async runGoogleScript(action, ...args) {
-                // Fallback sistem Mock untuk pratinjau browser jika API bermasalah/belum diganti
                 if (this.gasUrl.includes('URL_GAS') || this.gasUrl === '' || window.location.hostname === "cdpn.io" || window.location.hostname === "localhost") {
                     return new Promise((resolve) => {
                         setTimeout(() => {
@@ -308,148 +305,139 @@
                             if(action === 'getData') resolve(app.mockGetData(args[0], args[1]));
                             if(action === 'addLog') resolve(app.mockAddLog(args[0]));
                             if(action === 'registerChild') resolve(app.mockRegisterChild(args[0]));
-                        }, 500);
+                            if(action === 'editProfile') resolve(app.mockEditProfile(args[0]));
+                        }, 800);
                     });
                 }
-                // Call Real API
                 let payload = { action: action };
                 if (action === 'login') { payload.username = args[0]; payload.password = args[1]; }
                 if (action === 'getData') { payload.userId = args[0]; payload.role = args[1]; }
-                if (action === 'addLog' || action === 'registerChild') { payload.data = args[0]; }
+                if (action === 'addLog' || action === 'registerChild' || action === 'editProfile') { payload.data = args[0]; }
 
-                const response = await fetch(this.gasUrl, {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-                });
+                const response = await fetch(this.gasUrl, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' }});
                 return await response.json();
             },
 
-            // === Sistem Pratinjau (MOCK) ===
+            // --- MOCK LOGIC ---
             mockLogin(u, p) {
                 const user = MOCK_DB.users.find(x => x.username === u && x.password === p);
                 if(user) { let us = {...user}; delete us.password; return { success: true, user: us }; }
-                return { success: false, message: 'Username/Password salah (Gunakan ortu/123 atau anak/123)' };
+                return { success: false, message: 'Gunakan anak/123 atau ortu/123' };
             },
             mockGetData(userId, role) {
                 let logs = [...MOCK_DB.logs].reverse();
                 let result = { logs: [], schedules: MOCK_DB.schedules, users: MOCK_DB.users };
                 if (role === 'anak') {
-                    result.logs = logs.filter(l => l.userId === userId);
-                    result.schedules = MOCK_DB.schedules.filter(s => s.userId === userId);
+                    result.logs = logs.filter(l => l.userId === userId); result.schedules = MOCK_DB.schedules.filter(s => s.userId === userId);
                 } else if (role === 'ortu') {
-                    const childrenIds = MOCK_DB.users.filter(u => u.parentId === userId).map(u => u.id);
-                    result.logs = logs.filter(l => childrenIds.includes(l.userId));
+                    const childrenIds = MOCK_DB.users.filter(u => u.parentId === userId).map(u => u.id); result.logs = logs.filter(l => childrenIds.includes(l.userId));
                 }
                 return { success: true, data: result };
             },
             mockAddLog(data) {
                 MOCK_DB.logs.push({ id: 'LOG' + Date.now(), userId: data.userId, userName: data.userName, type: data.type, timestamp: new Date().toISOString(), lat: data.lat, lng: data.lng, photo: data.photo });
-                const u = MOCK_DB.users.find(x => x.id === data.userId);
-                if(u) u.points += 10;
+                const u = MOCK_DB.users.find(x => x.id === data.userId); if(u) u.points += 10;
                 return { success: true, message: 'Berhasil' };
             },
             mockRegisterChild(data) {
-                if(MOCK_DB.users.find(u => u.username === data.username)) return { success: false, message: 'Username dipakai' };
-                MOCK_DB.users.push({ id: 'u'+Date.now(), username: data.username, password: data.password, name: data.name, role: 'anak', parentId: data.parentId, points: 0 });
+                MOCK_DB.users.push({ id: 'u'+Date.now(), username: data.username, password: data.password, name: data.name, role: 'anak', parentId: data.parentId, points: 0, phone:'', profilePhoto:'' });
                 return { success: true, message: 'Anak ditambahkan' };
             },
-            // ================================
+            mockEditProfile(data) {
+                let u = MOCK_DB.users.find(x => x.id === data.userId);
+                if(u) {
+                    u.name = data.name; u.phone = data.phone; 
+                    if(data.newPhotoBase64) u.profilePhoto = data.newPhotoBase64;
+                    return { success: true, message: 'Profil diupdate' };
+                }
+                return { success:false, message: 'User tidak ditemukan' };
+            },
+            // ------------------
 
             showToast(msg, type = 'success') {
                 const toast = document.getElementById('toast');
                 document.getElementById('toast-message').textContent = msg;
                 document.getElementById('toast-icon').setAttribute('data-lucide', type === 'error' ? 'alert-circle' : 'check-circle');
-                lucide.createIcons();
-                toast.classList.remove('translate-y-[-150%]', 'opacity-0');
+                lucide.createIcons(); toast.classList.remove('translate-y-[-150%]', 'opacity-0');
                 setTimeout(() => { toast.classList.add('translate-y-[-150%]', 'opacity-0'); }, 3000);
             },
 
             async login() {
-                const u = document.getElementById('username').value;
-                const p = document.getElementById('password').value;
-                const btn = document.getElementById('btn-login');
-                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Loading...`;
-                lucide.createIcons();
+                const u = document.getElementById('username').value, p = document.getElementById('password').value, btn = document.getElementById('btn-login');
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Loading...`; lucide.createIcons();
                 try {
                     const res = await this.runGoogleScript('login', u, p);
-                    if (res.success) {
-                        this.currentUser = res.user;
-                        this.initApp();
-                        this.showToast(`Selamat datang, ${this.currentUser.name}!`);
-                    } else { this.showToast(res.message, 'error'); }
+                    if (res.success) { this.currentUser = res.user; this.initApp(); this.showToast(`Selamat datang, ${this.currentUser.name}!`); } 
+                    else { this.showToast(res.message, 'error'); }
                 } catch (err) { this.showToast('Gagal koneksi ke server', 'error'); }
                 finally { btn.innerHTML = `<span>Masuk</span>`; }
             },
 
-            logout() {
-                this.currentUser = null;
-                document.getElementById('login-view').classList.remove('hidden');
-                document.getElementById('app-view').classList.add('hidden');
-            },
+            logout() { this.currentUser = null; document.getElementById('login-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); },
 
             initApp() {
                 document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('app-view').classList.remove('hidden');
-                document.getElementById('app-view').classList.add('flex');
+                document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex');
                 
-                document.getElementById('user-greeting').textContent = `Hai, ${this.currentUser.name.split(' ')[0]}!`;
-                document.getElementById('user-role-badge').textContent = this.currentUser.role === 'anak' ? 'Siswa / Anak' : 'Orang Tua';
-                document.getElementById('profile-name').textContent = this.currentUser.name;
-                document.getElementById('profile-username').textContent = `@${this.currentUser.username}`;
-                document.getElementById('profile-role').textContent = this.currentUser.role;
+                this.updateProfileDisplay(this.currentUser);
 
                 if (this.currentUser.role === 'anak') {
-                    document.getElementById('home-anak-content').classList.remove('hidden');
-                    document.getElementById('home-admin-content').classList.add('hidden');
-                    this.renderActivityGrid();
+                    document.getElementById('home-anak-content').classList.remove('hidden'); document.getElementById('home-admin-content').classList.add('hidden');
+                    document.getElementById('activity-grid').innerHTML = ACTIVITIES.map(act => `<button onclick="app.openCameraFor('${act.id}')" class="flex flex-col items-center gap-2 group"><div class="w-14 h-14 rounded-2xl menu-icon-wrapper flex items-center justify-center shadow-sm active:scale-95 transition-transform"><i data-lucide="${act.icon}" class="w-7 h-7 ${act.color}"></i></div><span class="text-[11px] font-semibold text-slate-700 text-center">${act.id}</span></button>`).join('');
+                    lucide.createIcons();
                 } else {
-                    document.getElementById('home-anak-content').classList.add('hidden');
-                    document.getElementById('home-admin-content').classList.remove('hidden');
+                    document.getElementById('home-anak-content').classList.add('hidden'); document.getElementById('home-admin-content').classList.remove('hidden');
                 }
-                this.switchTab('home');
-                this.fetchData();
+                this.switchTab('home'); this.fetchData();
+            },
+
+            updateProfileDisplay(user) {
+                document.getElementById('user-greeting').textContent = `Hai, ${user.name.split(' ')[0]}!`;
+                document.getElementById('user-role-badge').textContent = user.role === 'anak' ? 'Siswa / Anak' : 'Orang Tua';
+                document.getElementById('profile-name').textContent = user.name;
+                document.getElementById('profile-username').textContent = `@${user.username}`;
+                document.getElementById('profile-phone').innerHTML = user.phone ? `<i data-lucide="phone" class="w-3 h-3 inline"></i> ${user.phone}` : `<i data-lucide="phone" class="w-3 h-3 inline"></i> Belum ada nomor`;
+                document.getElementById('profile-role').textContent = user.role;
+
+                // Update Avatar di Header & Profile Tab
+                const updateAvatar = (iconId, imgId, photoUrl) => {
+                    const icon = document.getElementById(iconId), img = document.getElementById(imgId);
+                    if(photoUrl) { icon.classList.add('hidden'); img.src = photoUrl; img.classList.remove('hidden'); }
+                    else { icon.classList.remove('hidden'); img.classList.add('hidden'); img.src = ''; }
+                };
+                updateAvatar('header-avatar-icon', 'header-avatar-img', user.profilePhoto);
+                updateAvatar('profile-avatar-icon', 'profile-avatar-img', user.profilePhoto);
+                lucide.createIcons();
             },
 
             switchTab(tabId) {
                 ['home', 'history', 'profile'].forEach(id => {
-                    document.getElementById(`tab-${id}`).classList.add('hidden');
-                    document.getElementById(`nav-${id}`).classList.replace('text-gopay-blue', 'text-slate-400');
+                    document.getElementById(`tab-${id}`).classList.add('hidden'); document.getElementById(`nav-${id}`).classList.replace('text-gopay-blue', 'text-slate-400');
                 });
-                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-                document.getElementById(`nav-${tabId}`).classList.replace('text-slate-400', 'text-gopay-blue');
-                if(tabId === 'history') this.fetchData();
-            },
-
-            renderActivityGrid() {
-                document.getElementById('activity-grid').innerHTML = ACTIVITIES.map(act => `
-                    <button onclick="app.openCameraFor('${act.id}')" class="flex flex-col items-center gap-2 group">
-                        <div class="w-14 h-14 rounded-2xl menu-icon-wrapper flex items-center justify-center shadow-sm active:scale-95 transition-transform">
-                            <i data-lucide="${act.icon}" class="w-7 h-7 ${act.color}"></i>
-                        </div>
-                        <span class="text-[11px] font-semibold text-slate-700 text-center">${act.id}</span>
-                    </button>
-                `).join('');
-                lucide.createIcons();
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden'); document.getElementById(`nav-${tabId}`).classList.replace('text-slate-400', 'text-gopay-blue');
+                if(tabId === 'history' || tabId === 'profile') this.fetchData();
             },
 
             async fetchData() {
                 try {
                     const res = await this.runGoogleScript('getData', this.currentUser.id, this.currentUser.role);
                     if(res.success) this.updateUI(res.data);
-                } catch(e) { console.error(e); }
+                } catch(e) {}
             },
 
             updateUI(data) {
+                // Selalu perbarui current user data secara lokal agar UI profile tetap sinkron
+                const freshMe = data.users.find(u => u.id === this.currentUser.id);
+                if(freshMe) {
+                    this.currentUser = freshMe; 
+                    this.updateProfileDisplay(freshMe);
+                }
+
                 if(this.currentUser.role === 'anak') {
-                    const me = data.users.find(u => u.id === this.currentUser.id);
-                    document.getElementById('dashboard-points').textContent = me ? (me.points || 0) : 0;
-                    
+                    document.getElementById('dashboard-points').textContent = freshMe ? (freshMe.points || 0) : 0;
                     const sched = document.getElementById('schedule-list');
                     if(data.schedules.length === 0) sched.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">Tidak ada jadwal</p>`;
-                    else sched.innerHTML = data.schedules.map(s => `
-                        <div class="flex items-center gap-4"><div class="bg-blue-50 text-gopay-blue text-xs font-bold px-2 py-1.5 rounded-lg">${s.time}</div>
-                        <div class="text-sm font-medium text-slate-700">${s.task}</div></div>`).join('');
+                    else sched.innerHTML = data.schedules.map(s => `<div class="flex items-center gap-4"><div class="bg-blue-50 text-gopay-blue text-xs font-bold px-2 py-1.5 rounded-lg">${s.time}</div><div class="text-sm font-medium text-slate-700">${s.task}</div></div>`).join('');
                 } else {
                     let targetUsers = data.users.filter(u => u.role === 'anak' && u.parentId === this.currentUser.id);
                     document.getElementById('stat-users').textContent = targetUsers.length;
@@ -458,159 +446,130 @@
                 }
 
                 document.getElementById('history-count').textContent = `${data.logs.length} Data`;
-                const hist = document.getElementById('history-list');
-                const empty = document.getElementById('history-empty');
-
-                if(data.logs.length === 0) {
-                    hist.innerHTML = ''; empty.classList.remove('hidden');
-                } else {
+                const hist = document.getElementById('history-list'); const empty = document.getElementById('history-empty');
+                if(data.logs.length === 0) { hist.innerHTML = ''; empty.classList.remove('hidden'); } 
+                else {
                     empty.classList.add('hidden');
                     hist.innerHTML = data.logs.map(log => {
                         const date = new Date(log.timestamp);
                         const timeStr = isNaN(date.getTime()) ? log.timestamp : date.toLocaleString('id-ID', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
-                        
                         let mapLink = log.lat ? `<a href="https://maps.google.com/?q=${log.lat},${log.lng}" target="_blank" class="text-xs text-gopay-blue font-medium mt-1 inline-flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> Peta</a>` : '';
-                        
-                        // FUNGSI BARU: Klik foto untuk membesarkan (berlaku di ortu dan anak)
                         let photoImg = log.photo ? `<img src="${log.photo}" onclick="app.showImageModal('${log.photo}')" class="w-16 h-16 object-cover rounded-xl border border-slate-100 cursor-pointer active:scale-95 transition-transform">` : `<div class="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center"><i data-lucide="image-off" class="w-6 h-6 text-slate-300"></i></div>`;
-                        
                         let userStr = this.currentUser.role !== 'anak' ? `<p class="text-xs font-bold text-slate-800 mb-1">${log.userName}</p>` : '';
 
-                        return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4">
-                            ${photoImg}
-                            <div class="flex-1">${userStr}
-                                <div class="flex justify-between items-start"><h4 class="font-bold text-sm text-slate-800">${log.type}</h4><span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded">${timeStr}</span></div>
-                                ${mapLink}
-                            </div>
-                        </div>`;
+                        return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4">${photoImg}<div class="flex-1">${userStr}<div class="flex justify-between items-start"><h4 class="font-bold text-sm text-slate-800">${log.type}</h4><span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded">${timeStr}</span></div>${mapLink}</div></div>`;
                     }).join('');
                     lucide.createIcons();
                 }
             },
 
-            // --- FUNGSI MODAL GAMBAR ---
-            showImageModal(url) {
-                document.getElementById('full-image-preview').src = url;
-                document.getElementById('image-modal').classList.remove('hidden');
-                document.getElementById('image-modal').classList.add('flex');
+            // --- FUNGSI EDIT PROFILE ---
+            openEditProfileModal() {
+                document.getElementById('edit-name').value = this.currentUser.name;
+                document.getElementById('edit-phone').value = this.currentUser.phone || '';
+                this.tempProfileBase64 = null; // reset
+                
+                const previewImg = document.getElementById('edit-photo-preview');
+                const previewIcon = document.getElementById('edit-photo-icon');
+                if(this.currentUser.profilePhoto) {
+                    previewImg.src = this.currentUser.profilePhoto;
+                    previewImg.classList.remove('hidden'); previewIcon.classList.add('hidden');
+                } else {
+                    previewImg.classList.add('hidden'); previewIcon.classList.remove('hidden');
+                }
+
+                document.getElementById('edit-profile-modal').classList.remove('hidden');
+                document.getElementById('edit-profile-modal').classList.add('flex');
             },
-            closeImageModal() {
-                document.getElementById('image-modal').classList.add('hidden');
-                document.getElementById('image-modal').classList.remove('flex');
-                document.getElementById('full-image-preview').src = '';
+            closeEditProfileModal() {
+                document.getElementById('edit-profile-modal').classList.add('hidden');
+                document.getElementById('edit-profile-modal').classList.remove('flex');
+                document.getElementById('edit-photo-input').value = ""; // clear file input
+            },
+            handleProfilePhotoSelect(event) {
+                const file = event.target.files[0];
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.tempProfileBase64 = e.target.result;
+                        document.getElementById('edit-photo-preview').src = this.tempProfileBase64;
+                        document.getElementById('edit-photo-preview').classList.remove('hidden');
+                        document.getElementById('edit-photo-icon').classList.add('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+            async submitEditProfile() {
+                const btn = document.getElementById('btn-edit-profile');
+                const payload = {
+                    userId: this.currentUser.id,
+                    name: document.getElementById('edit-name').value,
+                    phone: document.getElementById('edit-phone').value,
+                    newPhotoBase64: this.tempProfileBase64
+                };
+                
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Menyimpan...`; lucide.createIcons();
+                try {
+                    const res = await this.runGoogleScript('editProfile', payload);
+                    if(res.success) {
+                        this.showToast('Profil diperbarui!');
+                        this.closeEditProfileModal();
+                        this.fetchData(); // Ambil data terbaru dari DB
+                    } else { this.showToast(res.message, 'error'); }
+                } catch(e) { this.showToast('Gagal merubah profil', 'error'); }
+                finally { btn.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i> Simpan Perubahan`; lucide.createIcons();}
             },
 
-            // --- FUNGSI TAMBAH ANAK ---
-            openRegisterModal() {
-                document.getElementById('register-modal').classList.remove('hidden');
-                document.getElementById('register-modal').classList.add('flex');
-            },
-            closeRegisterModal() {
-                document.getElementById('register-modal').classList.add('hidden');
-                document.getElementById('register-modal').classList.remove('flex');
-            },
+            // --- FUNGSI LAINNYA ---
+            showImageModal(url) { document.getElementById('full-image-preview').src = url; document.getElementById('image-modal').classList.remove('hidden'); document.getElementById('image-modal').classList.add('flex'); },
+            closeImageModal() { document.getElementById('image-modal').classList.add('hidden'); document.getElementById('image-modal').classList.remove('flex'); document.getElementById('full-image-preview').src = ''; },
+            
+            openRegisterModal() { document.getElementById('register-modal').classList.remove('hidden'); document.getElementById('register-modal').classList.add('flex'); },
+            closeRegisterModal() { document.getElementById('register-modal').classList.add('hidden'); document.getElementById('register-modal').classList.remove('flex'); },
             async submitNewChild() {
-                const btn = document.getElementById('btn-register');
-                const data = {
-                    name: document.getElementById('reg-name').value,
-                    username: document.getElementById('reg-username').value,
-                    password: document.getElementById('reg-password').value,
-                    parentId: this.currentUser.id
-                };
-                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Menyimpan...`;
-                lucide.createIcons();
+                const btn = document.getElementById('btn-register'), data = { name: document.getElementById('reg-name').value, username: document.getElementById('reg-username').value, password: document.getElementById('reg-password').value, parentId: this.currentUser.id };
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Menyimpan...`; lucide.createIcons();
                 try {
                     const res = await this.runGoogleScript('registerChild', data);
-                    if(res.success) {
-                        this.showToast(res.message);
-                        this.closeRegisterModal();
-                        document.getElementById('reg-name').value = '';
-                        document.getElementById('reg-username').value = '';
-                        document.getElementById('reg-password').value = '';
-                        this.fetchData(); // Refresh statistik
-                    } else { this.showToast(res.message, 'error'); }
-                } catch(e) { this.showToast('Gagal mendaftar', 'error'); }
-                finally { btn.innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> Simpan Data`; lucide.createIcons();}
+                    if(res.success) { this.showToast(res.message); this.closeRegisterModal(); document.getElementById('reg-name').value = ''; document.getElementById('reg-username').value = ''; document.getElementById('reg-password').value = ''; this.fetchData(); } 
+                    else { this.showToast(res.message, 'error'); }
+                } catch(e) { this.showToast('Gagal', 'error'); } finally { btn.innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> Simpan`; lucide.createIcons();}
             },
 
-            // --- KAMERA & LAPORAN ---
+            // --- KAMERA ---
             async openCameraFor(actId) {
-                this.currentLog = { type: actId, photo: null, lat: null, lng: null };
-                document.getElementById('camera-title').textContent = actId;
-                document.getElementById('camera-modal').classList.remove('hidden');
-                document.getElementById('camera-modal').classList.add('flex');
-                this.autoGetLocation();
-                try {
-                    this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1024 } } });
-                    document.getElementById('camera-stream').srcObject = this.stream;
-                } catch (err) { this.closeCamera(); this.showToast('Gagal buka kamera', 'error'); }
+                this.currentLog = { type: actId, photo: null, lat: null, lng: null }; document.getElementById('camera-title').textContent = actId; document.getElementById('camera-modal').classList.remove('hidden'); document.getElementById('camera-modal').classList.add('flex'); this.autoGetLocation();
+                try { this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1024 } } }); document.getElementById('camera-stream').srcObject = this.stream; } catch (err) { this.closeCamera(); this.showToast('Gagal buka kamera', 'error'); }
             },
-            closeCamera() {
-                if (this.stream) this.stream.getTracks().forEach(t => t.stop());
-                this.stream = null;
-                document.getElementById('camera-modal').classList.add('hidden');
-                document.getElementById('camera-modal').classList.remove('flex');
-            },
+            closeCamera() { if (this.stream) this.stream.getTracks().forEach(t => t.stop()); this.stream = null; document.getElementById('camera-modal').classList.add('hidden'); document.getElementById('camera-modal').classList.remove('flex'); },
             autoGetLocation() {
-                const ind = document.getElementById('gps-indicator');
-                ind.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Lokasi...`; lucide.createIcons();
-                ind.classList.remove('hidden');
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (pos) => { this.currentLog.lat = pos.coords.latitude; this.currentLog.lng = pos.coords.longitude; ind.classList.add('hidden'); },
-                        () => { ind.classList.add('hidden'); }, { timeout: 5000 }
-                    );
-                } else { ind.classList.add('hidden'); }
+                const ind = document.getElementById('gps-indicator'); ind.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Lokasi...`; lucide.createIcons(); ind.classList.remove('hidden');
+                if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((pos) => { this.currentLog.lat = pos.coords.latitude; this.currentLog.lng = pos.coords.longitude; ind.classList.add('hidden'); }, () => { ind.classList.add('hidden'); }, { timeout: 5000 }); } else { ind.classList.add('hidden'); }
             },
             takePhoto() {
-                const video = document.getElementById('camera-stream');
-                const canvas = document.getElementById('photo-canvas');
-                const ctx = canvas.getContext('2d');
-                let scale = 1; if(video.videoWidth > 600) scale = 600 / video.videoWidth;
-                canvas.width = video.videoWidth * scale; canvas.height = video.videoHeight * scale;
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                this.currentLog.photo = canvas.toDataURL('image/jpeg', 0.4);
+                const video = document.getElementById('camera-stream'), canvas = document.getElementById('photo-canvas'), ctx = canvas.getContext('2d');
+                let scale = 1; if(video.videoWidth > 800) scale = 800 / video.videoWidth; // Kualitas foto aktivitas dinaikkan sedikit ke 800px karena disimpen di drive
+                canvas.width = video.videoWidth * scale; canvas.height = video.videoHeight * scale; ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                this.currentLog.photo = canvas.toDataURL('image/jpeg', 0.6); // Kompresi 60%
                 this.closeCamera(); this.openSubmitModal();
             },
             openSubmitModal() {
-                document.getElementById('submit-modal').classList.remove('hidden');
-                document.getElementById('submit-modal').classList.add('flex');
-                document.getElementById('photo-preview').src = this.currentLog.photo;
-                document.getElementById('preview-type').textContent = this.currentLog.type;
+                document.getElementById('submit-modal').classList.remove('hidden'); document.getElementById('submit-modal').classList.add('flex');
+                document.getElementById('photo-preview').src = this.currentLog.photo; document.getElementById('preview-type').textContent = this.currentLog.type;
                 document.getElementById('preview-timestamp').textContent = new Date().toLocaleString('id-ID', {hour:'2-digit', minute:'2-digit'});
                 document.getElementById('preview-location').textContent = this.currentLog.lat ? `${this.currentLog.lat.toFixed(4)}, ${this.currentLog.lng.toFixed(4)}` : "Tidak ada lokasi";
             },
-            retakePhoto() {
-                document.getElementById('submit-modal').classList.add('hidden');
-                document.getElementById('submit-modal').classList.remove('flex');
-                this.openCameraFor(this.currentLog.type);
-            },
+            retakePhoto() { document.getElementById('submit-modal').classList.add('hidden'); document.getElementById('submit-modal').classList.remove('flex'); this.openCameraFor(this.currentLog.type); },
             async submitLog() {
-                const btn = document.getElementById('btn-submit-log');
-                if(btn.disabled) return; btn.disabled = true;
-                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Menyimpan...`; lucide.createIcons();
-                
+                const btn = document.getElementById('btn-submit-log'); if(btn.disabled) return; btn.disabled = true;
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Sedang Mengunggah Foto...`; lucide.createIcons();
                 const desc = document.getElementById('log-description').value.trim();
-                const payload = {
-                    userId: this.currentUser.id, userName: this.currentUser.name,
-                    type: desc ? `${this.currentLog.type} - ${desc}` : this.currentLog.type, 
-                    photo: this.currentLog.photo, lat: this.currentLog.lat, lng: this.currentLog.lng
-                };
-
+                const payload = { userId: this.currentUser.id, userName: this.currentUser.name, type: desc ? `${this.currentLog.type} - ${desc}` : this.currentLog.type, photo: this.currentLog.photo, lat: this.currentLog.lat, lng: this.currentLog.lng };
                 try {
                     const res = await this.runGoogleScript('addLog', payload);
-                    if(res.success) {
-                        this.showToast('Berhasil dikirim!');
-                        document.getElementById('submit-modal').classList.add('hidden');
-                        document.getElementById('submit-modal').classList.remove('flex');
-                        this.switchTab('history');
-                    } else { this.showToast(res.message, 'error'); }
-                } catch(e) { this.showToast('Gagal terkirim', 'error'); }
-                finally {
-                    btn.disabled = false;
-                    btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i><span>Kirim Laporan</span>`;
-                    lucide.createIcons();
-                }
+                    if(res.success) { this.showToast('Berhasil dikirim!'); document.getElementById('submit-modal').classList.add('hidden'); document.getElementById('submit-modal').classList.remove('flex'); this.switchTab('history'); } 
+                    else { this.showToast(res.message, 'error'); }
+                } catch(e) { this.showToast('Gagal terkirim', 'error'); } finally { btn.disabled = false; btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i><span>Kirim Laporan</span>`; lucide.createIcons(); }
             }
         };
     </script>
