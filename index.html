@@ -33,12 +33,11 @@
 </head>
 <body class="text-slate-800 antialiased h-screen w-screen overflow-hidden flex flex-col bg-slate-50 relative">
 
-    <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-300 translate-y-[-150%] opacity-0 flex items-center gap-3 px-5 py-3 rounded-full shadow-lg font-medium text-sm w-11/12 max-w-sm">
+    <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-300 translate-y-[-150%] opacity-0 flex items-center gap-3 px-5 py-3 rounded-full shadow-lg font-medium text-sm w-11/12 max-w-sm bg-white text-slate-800">
         <i data-lucide="info" id="toast-icon" class="w-5 h-5"></i>
         <span id="toast-message" class="flex-1 text-center">Notifikasi</span>
     </div>
 
-    <!-- VIEW LOGIN -->
     <main id="login-view" class="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 bg-white fade-in">
         <div class="w-full max-w-md text-center">
             <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center">
@@ -47,7 +46,7 @@
             <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Portal</h2>
             <p class="text-slate-500 mt-2 mb-10 text-sm">Masuk untuk mencatat aktivitas harianmu.</p>
             
-            <form id="login-form" class="space-y-4 text-left" onsubmit="event.preventDefault(); app.login();">
+            <form id="login-form" class="space-y-4 text-left" onsubmit="event.preventDefault(); window.app.login();">
                 <div class="relative">
                     <i data-lucide="user" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400"></i>
                     <input type="text" id="username" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-gopay-blue outline-none font-medium" placeholder="Username" required>
@@ -63,11 +62,9 @@
         </div>
     </main>
 
-    <!-- MAIN APP VIEW -->
     <div id="app-view" class="hidden flex-col h-full w-full relative">
         <div id="content-area" class="flex-1 overflow-y-auto no-scrollbar pb-24">
             
-            <!-- ====== TAB: HOME ====== -->
             <div id="tab-home" class="w-full max-w-lg mx-auto fade-in">
                 <!-- Header -->
                 <div class="bg-gopay-blue text-white rounded-b-3xl px-6 pt-10 pb-8 shadow-md">
@@ -90,7 +87,7 @@
                                 <span class="text-sm font-medium text-slate-400 mb-1">Pts</span>
                             </div>
                         </div>
-                        <button onclick="app.fetchData()" class="p-3 bg-blue-50 text-gopay-blue rounded-xl hover:bg-blue-100 transition">
+                        <button onclick="window.app.fetchData()" class="p-3 bg-blue-50 text-gopay-blue rounded-xl hover:bg-blue-100 transition">
                             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                         </button>
                     </div>
@@ -118,13 +115,12 @@
                             <h4 class="text-2xl font-bold text-slate-800" id="stat-logs">0</h4>
                         </div>
                     </div>
-                    <button onclick="app.openRegisterModal()" class="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2">
+                    <button onclick="window.app.openRegisterModal()" class="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2">
                         <i data-lucide="user-plus" class="w-5 h-5"></i> Tambah Akun Anak
                     </button>
                 </div>
             </div>
 
-            <!-- ====== TAB: RIWAYAT ====== -->
             <div id="tab-history" class="w-full max-w-2xl mx-auto hidden fade-in px-4 pt-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-slate-800" id="history-title">Riwayat Log</h2>
@@ -137,11 +133,10 @@
                 </div>
             </div>
 
-            <!-- ====== TAB: PROFILE ====== -->
             <div id="tab-profile" class="w-full max-w-lg mx-auto hidden fade-in px-5 pt-10">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-slate-800">Profil Saya</h2>
-                    <button onclick="app.openEditProfileModal()" class="text-sm font-semibold text-gopay-blue bg-blue-50 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                    <button onclick="window.app.openEditProfileModal()" class="text-sm font-semibold text-gopay-blue bg-blue-50 px-3 py-1.5 rounded-lg flex items-center gap-1">
                         <i data-lucide="edit-3" class="w-4 h-4"></i> Edit
                     </button>
                 </div>
@@ -156,7 +151,7 @@
                     <p class="text-slate-500 text-sm mb-4 font-medium" id="profile-phone"><i data-lucide="phone" class="w-3 h-3 inline"></i> Belum ada nomor</p>
                     <span class="inline-block bg-blue-50 text-gopay-blue px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide" id="profile-role">ROLE</span>
                 </div>
-                <button onclick="app.logout()" class="w-full bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2">
+                <button onclick="window.app.logout()" class="w-full bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2">
                     <i data-lucide="log-out" class="w-5 h-5"></i> Keluar
                 </button>
             </div>
@@ -164,15 +159,15 @@
 
         <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-40">
             <div class="max-w-md mx-auto flex justify-between px-6 py-2">
-                <button onclick="app.switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center p-2 text-gopay-blue w-16 transition-colors">
+                <button onclick="window.app.switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center p-2 text-gopay-blue w-16 transition-colors">
                     <i data-lucide="home" class="w-6 h-6 mb-1"></i>
                     <span class="text-[10px] font-semibold">Beranda</span>
                 </button>
-                <button onclick="app.switchTab('history')" id="nav-history" class="nav-btn flex flex-col items-center p-2 text-slate-400 w-16 transition-colors">
+                <button onclick="window.app.switchTab('history')" id="nav-history" class="nav-btn flex flex-col items-center p-2 text-slate-400 w-16 transition-colors">
                     <i data-lucide="file-text" class="w-6 h-6 mb-1"></i>
                     <span class="text-[10px] font-semibold" id="nav-history-text">Riwayat</span>
                 </button>
-                <button onclick="app.switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center p-2 text-slate-400 w-16 transition-colors">
+                <button onclick="window.app.switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center p-2 text-slate-400 w-16 transition-colors">
                     <i data-lucide="user" class="w-6 h-6 mb-1"></i>
                     <span class="text-[10px] font-semibold">Profil</span>
                 </button>
@@ -180,14 +175,11 @@
         </nav>
     </div>
 
-    <!-- SEMUA MODAL DISINI -->
-    
-    <!-- Modal Kamera (Log) -->
     <div id="camera-modal" class="fixed inset-0 z-[60] bg-black hidden flex-col slide-up">
         <div class="relative flex-1 bg-black overflow-hidden">
             <video id="camera-stream" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline></video>
             <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center bg-gradient-to-b from-black/70 to-transparent z-10">
-                <button onclick="app.closeCamera()" class="p-2 bg-black/40 text-white rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <button onclick="window.app.closeCamera()" class="p-2 bg-black/40 text-white rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
                 <span class="text-white font-medium text-sm tracking-wide" id="camera-title">Ambil Foto</span>
                 <div class="w-10"></div>
             </div>
@@ -195,18 +187,23 @@
                 <i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Mencari lokasi...
             </div>
         </div>
-        <div class="bg-black pb-10 pt-6 px-6 flex justify-center items-center">
-            <button onclick="app.takePhoto()" class="w-20 h-20 rounded-full border-4 border-white p-1 focus:outline-none">
+        <div class="bg-black pb-10 pt-6 px-6 flex justify-center items-center relative">
+             <button onclick="document.getElementById('photo-upload-input').click()" class="absolute left-6 p-3 bg-white/20 rounded-full text-white">
+                <i data-lucide="image" class="w-6 h-6"></i>
+             </button>
+            <input type="file" id="photo-upload-input" accept="image/*" class="hidden" onchange="window.app.handlePhotoUpload(event)">
+            
+            <button onclick="window.app.takePhoto()" class="w-20 h-20 rounded-full border-4 border-white p-1 focus:outline-none">
                 <div class="w-full h-full bg-white rounded-full active:scale-95 transition-transform"></div>
             </button>
+            <div class="w-12 h-12 absolute right-6"></div>
         </div>
         <canvas id="photo-canvas" class="hidden"></canvas>
     </div>
 
-    <!-- Modal Preview Submit Log -->
     <div id="submit-modal" class="fixed inset-0 z-[70] bg-white hidden flex-col slide-up">
         <div class="p-4 flex items-center justify-between border-b border-slate-100">
-            <button onclick="app.retakePhoto()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-full"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
+            <button onclick="window.app.retakePhoto()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-full"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
             <h3 class="font-bold text-slate-800">Kirim Laporan</h3>
             <div class="w-10"></div>
         </div>
@@ -225,17 +222,16 @@
             </div>
         </div>
         <div class="p-4 bg-white border-t border-slate-200 pb-8">
-            <button id="btn-submit-log" onclick="app.submitLog()" class="w-full bg-gopay-blue text-white font-bold py-4 rounded-2xl shadow-md flex items-center justify-center gap-2">
+            <button id="btn-submit-log" onclick="window.app.submitLog()" class="w-full bg-gopay-blue text-white font-bold py-4 rounded-2xl shadow-md flex items-center justify-center gap-2">
                 <i data-lucide="send" class="w-5 h-5"></i><span>Kirim Laporan</span>
             </button>
         </div>
     </div>
 
-    <!-- Modal Tambah Anak -->
     <div id="register-modal" class="fixed inset-0 z-[80] bg-black/50 hidden items-center justify-center p-4 fade-in">
         <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-xl slide-up">
-            <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg text-slate-800">Tambah Akun Anak</h3><button onclick="app.closeRegisterModal()" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-            <form onsubmit="event.preventDefault(); app.submitNewChild();" class="space-y-4">
+            <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg text-slate-800">Tambah Akun Anak</h3><button onclick="window.app.closeRegisterModal()" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <form onsubmit="event.preventDefault(); window.app.submitNewChild();" class="space-y-4">
                 <div><label class="text-xs font-bold text-slate-500 mb-1 block">Nama Anak</label><input type="text" id="reg-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
                 <div><label class="text-xs font-bold text-slate-500 mb-1 block">Username Login</label><input type="text" id="reg-username" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
                 <div><label class="text-xs font-bold text-slate-500 mb-1 block">Password</label><input type="password" id="reg-password" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
@@ -244,13 +240,11 @@
         </div>
     </div>
 
-    <!-- Modal Edit Profile -->
     <div id="edit-profile-modal" class="fixed inset-0 z-[80] bg-black/50 hidden items-center justify-center p-4 fade-in">
         <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-xl slide-up">
-            <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg text-slate-800">Edit Profil</h3><button onclick="app.closeEditProfileModal()" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg text-slate-800">Edit Profil</h3><button onclick="window.app.closeEditProfileModal()" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             
-            <form onsubmit="event.preventDefault(); app.submitEditProfile();" class="space-y-4">
-                <!-- Ubah Foto -->
+            <form onsubmit="event.preventDefault(); window.app.submitEditProfile();" class="space-y-4">
                 <div class="text-center mb-4">
                     <label for="edit-photo-input" class="inline-block relative cursor-pointer group">
                         <div class="w-20 h-20 bg-slate-100 rounded-full mx-auto flex items-center justify-center overflow-hidden border-2 border-slate-200 group-hover:border-gopay-blue transition">
@@ -259,7 +253,7 @@
                         </div>
                         <p class="text-[10px] font-bold text-gopay-blue mt-2">Ganti Foto</p>
                     </label>
-                    <input type="file" id="edit-photo-input" accept="image/*" class="hidden" onchange="app.handleProfilePhotoSelect(event)">
+                    <input type="file" id="edit-photo-input" accept="image/*" class="hidden" onchange="window.app.handleProfilePhotoSelect(event)">
                 </div>
 
                 <div><label class="text-xs font-bold text-slate-500 mb-1 block">Nama Lengkap</label><input type="text" id="edit-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gopay-blue"></div>
@@ -270,9 +264,8 @@
         </div>
     </div>
 
-    <!-- Modal Lihat Foto Full -->
     <div id="image-modal" class="fixed inset-0 z-[90] bg-black/95 hidden flex-col fade-in">
-        <div class="p-4 flex justify-end"><button onclick="app.closeImageModal()" class="p-2 bg-white/20 text-white rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+        <div class="p-4 flex justify-end"><button onclick="window.app.closeImageModal()" class="p-2 bg-white/20 text-white rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button></div>
         <div class="flex-1 flex items-center justify-center p-4"><img id="full-image-preview" src="" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl"></div>
     </div>
 
@@ -287,7 +280,6 @@
             ],
             logs: [], schedules: []
         };
-        // REVISI: Tambahkan aktivitas Pulang Sekolah
         const ACTIVITIES = [ 
             { id: 'Pulang Sekolah', icon: 'school', color: 'text-yellow-500' },
             { id: 'Makan', icon: 'utensils', color: 'text-orange-500' }, 
@@ -299,24 +291,24 @@
             { id: 'Lainnya', icon: 'layout-grid', color: 'text-slate-600' } 
         ];
 
-        const app = {
+        window.app = {
             currentUser: null,
             currentLog: { type: '', photo: null, lat: null, lng: null, desc: '' },
             stream: null,
             tempProfileBase64: null, 
             
             // MASUKAN URL DEPLOY GOOGLE APPS SCRIPT ANDA DI SINI
-            gasUrl: 'https://script.google.com/macros/s/AKfycbyn9e4-uoXKl7h-fSoE5z8Z6R_m44dVHlGT6j2yrOaC6z012cSMK76WX5veiylVQrSM/exec', // Ganti dengan URL yang valid jika sudah ada
+            gasUrl: 'https://script.google.com/macros/s/AKfycbyaaXUiKBsdn_AwR8nU8r_xubM9cGZp2eejBhUsBtu9kVyaupTFRCE_J-adaXroxFNr/exec', 
 
             async runGoogleScript(action, ...args) {
                 if (this.gasUrl.includes('URL_GAS') || this.gasUrl === '' || window.location.hostname === "cdpn.io" || window.location.hostname === "localhost") {
                     return new Promise((resolve) => {
                         setTimeout(() => {
-                            if(action === 'login') resolve(app.mockLogin(args[0], args[1]));
-                            if(action === 'getData') resolve(app.mockGetData(args[0], args[1]));
-                            if(action === 'addLog') resolve(app.mockAddLog(args[0]));
-                            if(action === 'registerChild') resolve(app.mockRegisterChild(args[0]));
-                            if(action === 'editProfile') resolve(app.mockEditProfile(args[0]));
+                            if(action === 'login') resolve(this.mockLogin(args[0], args[1]));
+                            if(action === 'getData') resolve(this.mockGetData(args[0], args[1]));
+                            if(action === 'addLog') resolve(this.mockAddLog(args[0]));
+                            if(action === 'registerChild') resolve(this.mockRegisterChild(args[0]));
+                            if(action === 'editProfile') resolve(this.mockEditProfile(args[0]));
                         }, 800);
                     });
                 }
@@ -325,14 +317,30 @@
                 if (action === 'getData') { payload.userId = args[0]; payload.role = args[1]; }
                 if (action === 'addLog' || action === 'registerChild' || action === 'editProfile') { payload.data = args[0]; }
 
-                const response = await fetch(this.gasUrl, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' }});
-                return await response.json();
+                try {
+                     const response = await fetch(this.gasUrl, { 
+                         method: 'POST', 
+                         body: JSON.stringify(payload), 
+                         headers: { 
+                             'Content-Type': 'text/plain;charset=utf-8' 
+                         },
+                         redirect: 'follow'
+                     });
+                     
+                     if (!response.ok) {
+                         throw new Error(`HTTP error! status: ${response.status}`);
+                     }
+                     return await response.json();
+                } catch (error) {
+                    console.error("Fetch error:", error);
+                    return { success: false, message: `Error koneksi: ${error.message}` };
+                }
             },
 
             mockLogin(u, p) {
                 const user = MOCK_DB.users.find(x => x.username === u && x.password === p);
                 if(user) { let us = {...user}; delete us.password; return { success: true, user: us }; }
-                return { success: false, message: 'Gunakan anak/123 atau ortu/123' };
+                return { success: false, message: 'Username atau password salah' };
             },
             mockGetData(userId, role) {
                 let logs = [...MOCK_DB.logs].reverse();
@@ -376,13 +384,27 @@
                 btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Loading...`; lucide.createIcons();
                 try {
                     const res = await this.runGoogleScript('login', u, p);
-                    if (res.success) { this.currentUser = res.user; this.initApp(); this.showToast(`Selamat datang, ${this.currentUser.name}!`); } 
-                    else { this.showToast(res.message, 'error'); }
-                } catch (err) { this.showToast('Gagal koneksi ke server', 'error'); }
+                    if (res.success) { 
+                        this.currentUser = res.user; 
+                        this.initApp(); 
+                        this.showToast(`Selamat datang, ${this.currentUser.name}!`); 
+                    } 
+                    else { 
+                        this.showToast(res.message || 'Gagal login', 'error'); 
+                    }
+                } catch (err) { 
+                    this.showToast('Gagal koneksi ke server', 'error'); 
+                    console.error("Login Error: ", err);
+                }
                 finally { btn.innerHTML = `<span>Masuk</span>`; }
             },
 
-            logout() { this.currentUser = null; document.getElementById('login-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); },
+            logout() { 
+                this.currentUser = null; 
+                document.getElementById('login-form').reset();
+                document.getElementById('login-view').classList.remove('hidden'); 
+                document.getElementById('app-view').classList.add('hidden'); 
+            },
 
             initApp() {
                 document.getElementById('login-view').classList.add('hidden');
@@ -392,8 +414,7 @@
 
                 if (this.currentUser.role === 'anak') {
                     document.getElementById('home-anak-content').classList.remove('hidden'); document.getElementById('home-admin-content').classList.add('hidden');
-                    // Render Activity Grid
-                    document.getElementById('activity-grid').innerHTML = ACTIVITIES.map(act => `<button onclick="app.openCameraFor('${act.id}')" class="flex flex-col items-center gap-2 group"><div class="w-14 h-14 rounded-2xl menu-icon-wrapper flex items-center justify-center shadow-sm active:scale-95 transition-transform"><i data-lucide="${act.icon}" class="w-7 h-7 ${act.color}"></i></div><span class="text-[11px] font-semibold text-slate-700 text-center leading-tight">${act.id}</span></button>`).join('');
+                    document.getElementById('activity-grid').innerHTML = ACTIVITIES.map(act => `<button onclick="window.app.openCameraFor('${act.id}')" class="flex flex-col items-center gap-2 group"><div class="w-14 h-14 rounded-2xl menu-icon-wrapper flex items-center justify-center shadow-sm active:scale-95 transition-transform"><i data-lucide="${act.icon}" class="w-7 h-7 ${act.color}"></i></div><span class="text-[11px] font-semibold text-slate-700 text-center leading-tight">${act.id}</span></button>`).join('');
                     lucide.createIcons();
                 } else {
                     document.getElementById('home-anak-content').classList.add('hidden'); document.getElementById('home-admin-content').classList.remove('hidden');
@@ -430,8 +451,14 @@
             async fetchData() {
                 try {
                     const res = await this.runGoogleScript('getData', this.currentUser.id, this.currentUser.role);
-                    if(res.success) this.updateUI(res.data);
-                } catch(e) {}
+                    if(res.success) {
+                        this.updateUI(res.data);
+                    } else {
+                        console.error("Fetch data failed: ", res.message);
+                    }
+                } catch(e) {
+                     console.error("Fetch data error: ", e);
+                }
             },
 
             updateUI(data) {
@@ -462,7 +489,7 @@
                         const date = new Date(log.timestamp);
                         const timeStr = isNaN(date.getTime()) ? log.timestamp : date.toLocaleString('id-ID', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
                         let mapLink = log.lat ? `<a href="https://maps.google.com/?q=${log.lat},${log.lng}" target="_blank" class="text-xs text-gopay-blue font-medium mt-1 inline-flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> Peta</a>` : '';
-                        let photoImg = log.photo ? `<img src="${log.photo}" onclick="app.showImageModal('${log.photo}')" class="w-16 h-16 object-cover rounded-xl border border-slate-100 cursor-pointer active:scale-95 transition-transform">` : `<div class="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center"><i data-lucide="image-off" class="w-6 h-6 text-slate-300"></i></div>`;
+                        let photoImg = log.photo ? `<img src="${log.photo}" onclick="window.app.showImageModal('${log.photo}')" class="w-16 h-16 object-cover rounded-xl border border-slate-100 cursor-pointer active:scale-95 transition-transform">` : `<div class="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center"><i data-lucide="image-off" class="w-6 h-6 text-slate-300"></i></div>`;
                         let userStr = this.currentUser.role !== 'anak' ? `<p class="text-xs font-bold text-slate-800 mb-1">${log.userName}</p>` : '';
 
                         return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4">${photoImg}<div class="flex-1">${userStr}<div class="flex justify-between items-start"><h4 class="font-bold text-sm text-slate-800">${log.type}</h4><span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded">${timeStr}</span></div>${mapLink}</div></div>`;
@@ -532,6 +559,7 @@
             
             openRegisterModal() { document.getElementById('register-modal').classList.remove('hidden'); document.getElementById('register-modal').classList.add('flex'); },
             closeRegisterModal() { document.getElementById('register-modal').classList.add('hidden'); document.getElementById('register-modal').classList.remove('flex'); },
+            
             async submitNewChild() {
                 const btn = document.getElementById('btn-register'), data = { name: document.getElementById('reg-name').value, username: document.getElementById('reg-username').value, password: document.getElementById('reg-password').value, parentId: this.currentUser.id };
                 btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Menyimpan...`; lucide.createIcons();
@@ -543,16 +571,54 @@
             },
 
             async openCameraFor(actId) {
-                this.currentLog = { type: actId, photo: null, lat: null, lng: null }; document.getElementById('camera-title').textContent = actId; document.getElementById('camera-modal').classList.remove('hidden'); document.getElementById('camera-modal').classList.add('flex'); this.autoGetLocation();
-                try { this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1024 } } }); document.getElementById('camera-stream').srcObject = this.stream; } catch (err) { this.closeCamera(); this.showToast('Gagal buka kamera', 'error'); }
+                this.currentLog = { type: actId, photo: null, lat: null, lng: null }; 
+                document.getElementById('camera-title').textContent = actId; 
+                document.getElementById('camera-modal').classList.remove('hidden'); 
+                document.getElementById('camera-modal').classList.add('flex'); 
+                
+                const video = document.getElementById('camera-stream');
+                video.srcObject = null;
+                document.getElementById('photo-upload-input').value = ""; 
+                
+                this.autoGetLocation();
+                
+                try { 
+                    this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1024 } } }); 
+                    video.srcObject = this.stream; 
+                } catch (err) { 
+                    console.warn('Gagal buka kamera. Silakan gunakan tombol upload.', err); 
+                }
             },
-            closeCamera() { if (this.stream) this.stream.getTracks().forEach(t => t.stop()); this.stream = null; document.getElementById('camera-modal').classList.add('hidden'); document.getElementById('camera-modal').classList.remove('flex'); },
+            closeCamera() { 
+                if (this.stream) this.stream.getTracks().forEach(t => t.stop()); 
+                this.stream = null; 
+                document.getElementById('camera-modal').classList.add('hidden'); 
+                document.getElementById('camera-modal').classList.remove('flex'); 
+            },
+            handlePhotoUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.currentLog.photo = e.target.result;
+                        this.closeCamera();
+                        this.openSubmitModal();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+            
             autoGetLocation() {
                 const ind = document.getElementById('gps-indicator'); ind.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Lokasi...`; lucide.createIcons(); ind.classList.remove('hidden');
                 if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((pos) => { this.currentLog.lat = pos.coords.latitude; this.currentLog.lng = pos.coords.longitude; ind.classList.add('hidden'); }, () => { ind.classList.add('hidden'); }, { timeout: 5000 }); } else { ind.classList.add('hidden'); }
             },
             takePhoto() {
-                const video = document.getElementById('camera-stream'), canvas = document.getElementById('photo-canvas'), ctx = canvas.getContext('2d');
+                const video = document.getElementById('camera-stream');
+                if (!video.srcObject) {
+                    this.showToast("Kamera tidak aktif. Gunakan tombol unggah foto.", "error");
+                    return;
+                }
+                const canvas = document.getElementById('photo-canvas'), ctx = canvas.getContext('2d');
                 let scale = 1; if(video.videoWidth > 800) scale = 800 / video.videoWidth; 
                 canvas.width = video.videoWidth * scale; canvas.height = video.videoHeight * scale; ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 this.currentLog.photo = canvas.toDataURL('image/jpeg', 0.6); 
@@ -564,6 +630,7 @@
                 document.getElementById('preview-timestamp').textContent = new Date().toLocaleString('id-ID', {hour:'2-digit', minute:'2-digit'});
                 document.getElementById('preview-location').textContent = this.currentLog.lat ? `${this.currentLog.lat.toFixed(4)}, ${this.currentLog.lng.toFixed(4)}` : "Tidak ada lokasi";
             },
+            
             retakePhoto() { document.getElementById('submit-modal').classList.add('hidden'); document.getElementById('submit-modal').classList.remove('flex'); this.openCameraFor(this.currentLog.type); },
             async submitLog() {
                 const btn = document.getElementById('btn-submit-log'); if(btn.disabled) return; btn.disabled = true;
@@ -572,12 +639,17 @@
                 const payload = { userId: this.currentUser.id, userName: this.currentUser.name, type: desc ? `${this.currentLog.type} - ${desc}` : this.currentLog.type, photo: this.currentLog.photo, lat: this.currentLog.lat, lng: this.currentLog.lng };
                 try {
                     const res = await this.runGoogleScript('addLog', payload);
-                    if(res.success) { this.showToast('Berhasil dikirim!'); document.getElementById('submit-modal').classList.add('hidden'); document.getElementById('submit-modal').classList.remove('flex'); this.switchTab('history'); } 
+                    if(res.success) { 
+                        this.showToast('Berhasil dikirim!'); 
+                        document.getElementById('submit-modal').classList.add('hidden'); 
+                        document.getElementById('submit-modal').classList.remove('flex');
+                        document.getElementById('log-description').value = '';
+                        this.switchTab('history'); 
+                    } 
                     else { this.showToast(res.message, 'error'); }
-                } catch(e) { this.showToast('Gagal terkirim', 'error'); } finally { btn.disabled = false; btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i><span>Kirim Laporan</span>`; lucide.createIcons(); }
+                } catch(e) { this.showToast('Gagal terkirim', 'error'); console.error(e); } finally { btn.disabled = false; btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i><span>Kirim Laporan</span>`; lucide.createIcons(); }
             }
         };
     </script>
-
 </body>
 </html>
